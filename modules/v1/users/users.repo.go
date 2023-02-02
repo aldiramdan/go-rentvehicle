@@ -27,6 +27,10 @@ func (r *user_repo) GetAllUsers() (*models.Users, error) {
 		return nil, errors.New("failed to get data")
 	}
 
+	if len(data) == 0 {
+		return nil, errors.New("data user is empty")
+	}
+
 	return &data, nil
 
 }
@@ -37,20 +41,20 @@ func (r *user_repo) GetUserById(id uint64) (*models.User, error) {
 
 	if err := r.db.
 		First(&data, id).Error; err != nil {
-		return nil, err
+		return nil, errors.New("failed to get data")
 	}
 
 	return &data, nil
 
 }
 
-func (r *user_repo) GetByUsername(id uint64) (*models.User, error) {
+func (r *user_repo) GetByUsername(username string) (*models.User, error) {
 
 	var data models.User
 
 	if err := r.db.
-		First(&data, id).Error; err != nil {
-		return nil, err
+		First(&data, "username = ?", username).Error; err != nil {
+		return nil, errors.New("failed to get data")
 	}
 
 	return &data, nil

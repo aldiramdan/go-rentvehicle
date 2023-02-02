@@ -17,13 +17,10 @@ func HashPassword(password string) (string, error) {
 
 }
 
-func CheckPassword(bodyPass, dbPass string) bool {
+func CheckPassword(hashPass, dbPass string) bool {
 
-	err := bcrypt.CompareHashAndPassword([]byte(bodyPass), []byte(dbPass))
+	err := bcrypt.CompareHashAndPassword([]byte(hashPass), []byte(dbPass))
 
-	if err != nil {
-		return false
-	}
+	return err == nil
 
-	return true
 }

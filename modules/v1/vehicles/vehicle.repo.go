@@ -26,6 +26,10 @@ func (r *vehicle_repo) GetAllVehicles() (*models.Vehicles, error) {
 		return nil, errors.New("failed to get data")
 	}
 
+	if len(data) == 0 {
+		return nil, errors.New("data vehicle is empty")
+	}
+
 	return &data, nil
 
 }
@@ -71,6 +75,10 @@ func (r *vehicle_repo) SearchVehicle(query string) (*models.Vehicles, error) {
 		Where("LOWER(vehicle.name) LIKE ? OR LOWER(location) LIKE ? OR LOWER(category.name) LIKE ?", "%"+query+"%", "%"+query+"%", ""+query+"").
 		Find(&data).Error; err != nil {
 		return nil, err
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("search data vehicle not found")
 	}
 
 	return &data, nil

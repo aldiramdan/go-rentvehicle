@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/aldiramdan/go-backend/databases/orm"
+	"github.com/aldiramdan/go-backend/modules/v1/auth"
 	"github.com/aldiramdan/go-backend/modules/v1/categories"
 	"github.com/aldiramdan/go-backend/modules/v1/histories"
 	"github.com/aldiramdan/go-backend/modules/v1/reservations"
@@ -20,6 +21,7 @@ func IndexRoute() (*mux.Router, error) {
 		return nil, err
 	}
 
+	auth.RouteAuth(mainRoute, db)
 	users.RouteUsers(mainRoute, db)
 	vehicles.RouteVehicle(mainRoute, db)
 	categories.RouteCategory(mainRoute, db)

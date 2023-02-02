@@ -3,12 +3,10 @@ package users
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
-	"github.com/gorilla/mux"
 )
 
 type user_ctrl struct {
@@ -29,16 +27,9 @@ func (c *user_ctrl) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 func (c *user_ctrl) GetUserById(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
+	user_id := r.Context().Value("user")
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
-		return
-	}
-
-	c.srvc.GetUserById(id).Send(w)
+	c.srvc.GetUserById(user_id.(uint64)).Send(w)
 
 }
 
@@ -59,39 +50,25 @@ func (c *user_ctrl) AddUser(w http.ResponseWriter, r *http.Request) {
 
 func (c *user_ctrl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
-
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
-		return
-	}
+	user_id := r.Context().Value("user")
 
 	var data *models.User
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 500, true)
 		return
 	}
 
-	c.srvc.UpdateUser(data, id).Send(w)
+	c.srvc.UpdateUser(data, user_id.(uint64)).Send(w)
 
 }
 
 func (c *user_ctrl) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
+	user_id := r.Context().Value("user")
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
-		return
-	}
-
-	c.srvc.DeleteUser(id).Send(w)
+	c.srvc.DeleteUser(user_id.(uint64)).Send(w)
 
 }

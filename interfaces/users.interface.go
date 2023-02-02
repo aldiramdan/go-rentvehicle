@@ -8,6 +8,7 @@ import (
 type UserRepo interface {
 	GetAllUsers() (*models.Users, error)
 	GetUserById(id uint64) (*models.User, error)
+	GetByUsername(username string) (*models.User, error)
 	AddUser(data *models.User) (*models.User, error)
 	UpdateUser(data *models.User, id uint64) (*models.User, error)
 	DeleteUser(id uint64) (*models.User, error)

@@ -1,6 +1,7 @@
 package reservations
 
 import (
+	"github.com/aldiramdan/go-backend/middlewares"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -13,9 +14,9 @@ func RouteTransaction(rt *mux.Router, db *gorm.DB) {
 	srvc := NewSrvc(repo)
 	ctrl := NewCtrl(srvc)
 
-	route.HandleFunc("/", ctrl.GetAllReservations).Methods("GET")
-	route.HandleFunc("/{id}", ctrl.GetReservationById).Methods("GET")
-	route.HandleFunc("/", ctrl.AddReservation).Methods("POST")
-	route.HandleFunc("/payment/{id}", ctrl.Payment).Methods("PUT")
+	route.HandleFunc("/", middlewares.Handle(ctrl.GetAllReservations, middlewares.AuthMidle("admin"))).Methods("GET")
+	route.HandleFunc("/{id}", middlewares.Handle(ctrl.GetReservationById, middlewares.AuthMidle("admin"))).Methods("GET")
+	route.HandleFunc("/", middlewares.Handle(ctrl.AddReservation, middlewares.AuthMidle("user", "admin"))).Methods("POST")
+	route.HandleFunc("/payment/{id}", middlewares.Handle(ctrl.AddReservation, middlewares.AuthMidle("user", "admin"))).Methods("PUT")
 
 }

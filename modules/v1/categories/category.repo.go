@@ -25,6 +25,10 @@ func (r *category_repo) GetAllCategories() (*models.Categories, error) {
 		return nil, errors.New("failed to get data")
 	}
 
+	if len(data) == 0 {
+		return nil, errors.New("data category is empty")
+	}
+
 	return &data, nil
 
 }
@@ -51,6 +55,10 @@ func (r *category_repo) SearchCategories(query string) (*models.Categories, erro
 		Where("name LIKE ? ", "%"+query+"%").
 		Find(&data).Error; err != nil {
 		return nil, err
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("search data category is empty")
 	}
 
 	return &data, nil

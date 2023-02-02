@@ -6,18 +6,18 @@ import (
 )
 
 type HistoryRepo interface {
-	GetAllHistories() (*models.Histories, error)
+	GetAllHistories(user_id uint64) (*models.Histories, error)
 	GetHistoryById(id uint64) (*models.History, error)
-	SearchHistory(query string) (*models.Histories, error)
+	SearchHistory(user_id uint64, query string) (*models.Histories, error)
 	AddHistory(data *models.History) (*models.History, error)
 	UpdateHistory(data *models.History, id uint64) (*models.History, error)
 	DeleteHistory(id uint64) (*models.History, error)
 }
 
 type HistorySrvc interface {
-	GetAllHistories() *libs.Response
+	GetAllHistories(user_id uint64) *libs.Response
 	GetHistoryById(id uint64) *libs.Response
-	SearchHistory(query string) *libs.Response
+	SearchHistory(user_id uint64, query string) *libs.Response
 	AddHistory(data *models.History) *libs.Response
 	UpdateHistory(data *models.History, id uint64) *libs.Response
 	DeleteHistory(id uint64) *libs.Response

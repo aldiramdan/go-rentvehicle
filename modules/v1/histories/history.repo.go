@@ -25,7 +25,7 @@ func NewVehicleRepo(db *gorm.DB) *vehicle_repo {
 	return &vehicle_repo{db}
 }
 
-func (r *history_repo) GetAllHistories() (*models.Histories, error) {
+func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error) {
 
 	var data models.Histories
 
@@ -35,8 +35,15 @@ func (r *history_repo) GetAllHistories() (*models.Histories, error) {
 		Preload("Reservation.Vehicle").
 		Preload("Reservation.Vehicle.Category").
 		Order("created_at DESC").
+		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
+		Joins("JOIN users ON users.user_id = reservation.user_id").
+		Where("reservation.user_id = ?", user_id).
 		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to get data")
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("data history is empty")
 	}
 
 	return &data, nil
@@ -60,7 +67,7 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 
 }
 
-func (r *history_repo) SearchHistory(query string) (*models.Histories, error) {
+func (r *history_repo) SearchHistory(user_id uint64, query string) (*models.Histories, error) {
 
 	var data models.Histories
 
@@ -72,9 +79,14 @@ func (r *history_repo) SearchHistory(query string) (*models.Histories, error) {
 		Order("created_at DESC").
 		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
 		Joins("JOIN vehicle ON vehicle.vehicle_id = reservation.vehicle_id").
-		Where("LOWER(vehicle.name) LIKE ?", "%"+query+"%").
+		Joins("JOIN users ON users.user_id = reservation.user_id").
+		Where("LOWER(vehicle.name) LIKE ? AND reservation.user_id = ?", "%"+query+"%", user_id).
 		Find(&data).Error; err != nil {
 		return nil, err
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("search data history not found")
 	}
 
 	return &data, nil

@@ -44,6 +44,8 @@ func (c *reservation_ctrl) GetReservationById(w http.ResponseWriter, r *http.Req
 
 func (c *reservation_ctrl) AddReservation(w http.ResponseWriter, r *http.Request) {
 
+	user_id := r.Context().Value("user")
+
 	var data *models.Reservation
 
 	err := json.NewDecoder(r.Body).Decode(&data)
@@ -52,6 +54,8 @@ func (c *reservation_ctrl) AddReservation(w http.ResponseWriter, r *http.Request
 		libs.GetResponse(err.Error(), 400, true)
 		return
 	}
+
+	data.UserID = user_id.(uint64)
 
 	c.srvc.AddReservation(data).Send(w)
 

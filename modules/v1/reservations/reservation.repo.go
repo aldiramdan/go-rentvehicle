@@ -31,6 +31,10 @@ func (r *reservation_repo) GetAllReservations() (*models.Reservations, error) {
 		return nil, errors.New("failed to get data")
 	}
 
+	if len(data) == 0 {
+		return nil, errors.New("data reservation is empty")
+	}
+
 	return &data, nil
 
 }

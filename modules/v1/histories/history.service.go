@@ -17,9 +17,9 @@ func NewSrvc(repo interfaces.HistoryRepo) *history_service {
 
 }
 
-func (s *history_service) GetAllHistories() *libs.Response {
+func (s *history_service) GetAllHistories(user_id uint64) *libs.Response {
 
-	result, err := s.repo.GetAllHistories()
+	result, err := s.repo.GetAllHistories(user_id)
 
 	if err != nil {
 		return libs.GetResponse(err.Error(), 500, true)
@@ -41,9 +41,9 @@ func (s *history_service) GetHistoryById(id uint64) *libs.Response {
 
 }
 
-func (s *history_service) SearchHistory(query string) *libs.Response {
+func (s *history_service) SearchHistory(user_id uint64, query string) *libs.Response {
 
-	result, err := s.repo.SearchHistory(query)
+	result, err := s.repo.SearchHistory(user_id, query)
 
 	if err != nil {
 		return libs.GetResponse(err.Error(), 500, true)

@@ -1,6 +1,9 @@
 package interfaces
 
-import "github.com/aldiramdan/go-backend/databases/orm/models"
+import (
+	"github.com/aldiramdan/go-backend/databases/orm/models"
+	"github.com/aldiramdan/go-backend/libs"
+)
 
 type HistoryRepo interface {
 	GetAllHistories() (*models.Histories, error)
@@ -9,4 +12,13 @@ type HistoryRepo interface {
 	AddHistory(data *models.History) (*models.History, error)
 	UpdateHistory(data *models.History, id uint64) (*models.History, error)
 	DeleteHistory(id uint64) (*models.History, error)
+}
+
+type HistorySrvc interface {
+	GetAllHistories() *libs.Response
+	GetHistoryById(id uint64) *libs.Response
+	SearchHistory(query string) *libs.Response
+	AddHistory(data *models.History) *libs.Response
+	UpdateHistory(data *models.History, id uint64) *libs.Response
+	DeleteHistory(id uint64) *libs.Response
 }

@@ -14,7 +14,7 @@ func RouteUsers(rt *mux.Router, db *gorm.DB) {
 	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllUsers).Methods("GET")
-	route.HandleFunc("/{id}", ctrl.GetById).Methods("GET")
+	route.HandleFunc("/{id}", ctrl.GetUserById).Methods("GET")
 	route.HandleFunc("/", ctrl.AddUser).Methods("POST")
 	route.HandleFunc("/{id}", ctrl.UpdateUser).Methods("PUT")
 	route.HandleFunc("/{id}", ctrl.DeleteUser).Methods("DElETE")

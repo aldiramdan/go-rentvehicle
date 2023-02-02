@@ -6,7 +6,7 @@ type Reservation struct {
 	ReservationID   uint64    `gorm:"primaryKey" json:"id,omitempty"`
 	UserID          uint64    `gorm:"foreignKey:UserID; references:UserID" json:"user_id"`
 	User            User      `json:"user_data"`
-	VehicleID       uint64    `gorm:"foreignKey:VehicleID; references:VehicleID" json:"vehcile_id"`
+	VehicleID       uint64    `gorm:"foreignKey:VehicleID; references:VehicleID" json:"vehicle_id"`
 	Vehicle         Vehicle   `json:"vehicle_data"`
 	StartDate       string    `json:"start_date"`
 	EndDate         string    `json:"end_date"`
@@ -16,7 +16,6 @@ type Reservation struct {
 	PaymentStatus   string    `gorm:"default: Pending" json:"payment_status"`
 	Prepayment      float64   `json:"prepayment"`
 	IsBooked        bool      `gorm:"default: false" json:"is_booked"`
-	ReturnStatus    string    `gorm:"default: Not been returned" json:"return_status"`
 	Rating          float64   `json:"rating"`
 	TransactionDate time.Time `gorm:"default: now()" json:"transaction_date"`
 	CreatedAt       time.Time `json:"created_at"`

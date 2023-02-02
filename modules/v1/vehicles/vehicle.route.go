@@ -9,8 +9,9 @@ func RouteVehicle(rt *mux.Router, db *gorm.DB) {
 
 	route := rt.PathPrefix("/vehicle").Subrouter()
 
-	repo := NewVehicleRepo(db)
-	ctrl := NewVehicleCtrl(repo)
+	repo := NewRepo(db)
+	srvc := NewSrvc(repo)
+	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllVehicles).Methods("GET")
 	route.HandleFunc("/popular/", ctrl.GetPopulerVehicle).Methods("GET")

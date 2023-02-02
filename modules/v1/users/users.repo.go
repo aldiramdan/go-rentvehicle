@@ -21,7 +21,9 @@ func (r *user_repo) GetAllUsers() (*models.Users, error) {
 
 	var data models.Users
 
-	if err := r.db.Order("created_at DESC").Find(&data).Error; err != nil {
+	if err := r.db.
+		Order("created_at DESC").
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to get data")
 	}
 
@@ -29,11 +31,12 @@ func (r *user_repo) GetAllUsers() (*models.Users, error) {
 
 }
 
-func (r *user_repo) GetById(id uint64) (*models.User, error) {
+func (r *user_repo) GetUserById(id uint64) (*models.User, error) {
 
 	var data models.User
 
-	if err := r.db.First(&data, id).Error; err != nil {
+	if err := r.db.
+		First(&data, id).Error; err != nil {
 		return nil, err
 	}
 
@@ -45,7 +48,8 @@ func (r *user_repo) GetByUsername(id uint64) (*models.User, error) {
 
 	var data models.User
 
-	if err := r.db.First(&data, id).Error; err != nil {
+	if err := r.db.
+		First(&data, id).Error; err != nil {
 		return nil, err
 	}
 
@@ -55,7 +59,8 @@ func (r *user_repo) GetByUsername(id uint64) (*models.User, error) {
 
 func (r *user_repo) AddUser(data *models.User) (*models.User, error) {
 
-	if err := r.db.Create(data).Error; err != nil {
+	if err := r.db.
+		Create(data).Error; err != nil {
 		return nil, errors.New("failed to create data")
 	}
 
@@ -65,7 +70,10 @@ func (r *user_repo) AddUser(data *models.User) (*models.User, error) {
 
 func (r *user_repo) UpdateUser(data *models.User, id uint64) (*models.User, error) {
 
-	if err := r.db.Model(data).Where("user_id = ?", id).Updates(&data).Error; err != nil {
+	if err := r.db.
+		Model(data).
+		Where("user_id = ?", id).
+		Updates(&data).Error; err != nil {
 		return nil, errors.New("failed to update data")
 	}
 
@@ -77,7 +85,8 @@ func (r *user_repo) DeleteUser(id uint64) (*models.User, error) {
 
 	var data models.User
 
-	if err := r.db.Delete(data, id).Error; err != nil {
+	if err := r.db.
+		Delete(data, id).Error; err != nil {
 		return nil, errors.New("failed to delete data")
 	}
 
@@ -89,7 +98,8 @@ func (r *user_repo) UserExsist(username string) bool {
 
 	var data models.User
 
-	err := r.db.First(&data, "username = ?", username)
+	err := r.db.
+		First(&data, "username = ?", username)
 
 	return err.Error == nil
 
@@ -99,7 +109,8 @@ func (r *user_repo) EmailExsist(email string) bool {
 
 	var data models.User
 
-	err := r.db.First(&data, "email = ?", email)
+	err := r.db.
+		First(&data, "email = ?", email)
 
 	return err.Error == nil
 

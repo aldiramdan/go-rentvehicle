@@ -9,8 +9,9 @@ func RouteTransaction(rt *mux.Router, db *gorm.DB) {
 
 	route := rt.PathPrefix("/reservation").Subrouter()
 
-	repo := NewReservationRepo(db)
-	ctrl := NewReservationCtrl(repo)
+	repo := NewRepo(db)
+	srvc := NewSrvc(repo)
+	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllReservations).Methods("GET")
 	route.HandleFunc("/{id}", ctrl.GetReservationById).Methods("GET")

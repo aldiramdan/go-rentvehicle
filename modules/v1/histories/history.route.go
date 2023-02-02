@@ -9,8 +9,9 @@ func RouteHistory(rt *mux.Router, db *gorm.DB) {
 
 	route := rt.PathPrefix("/history").Subrouter()
 
-	repo := NewHisotryRepo(db)
-	ctrl := NewHistoryCtrl(repo)
+	repo := NewRepo(db)
+	srvc := NewSrvc(repo)
+	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllHistories).Methods("GET")
 	route.HandleFunc("/{id}", ctrl.GetHistoryById).Methods("GET")

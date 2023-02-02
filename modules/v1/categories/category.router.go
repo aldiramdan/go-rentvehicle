@@ -9,8 +9,9 @@ func RouteCategory(rt *mux.Router, db *gorm.DB) {
 
 	route := rt.PathPrefix("/vehicle/category").Subrouter()
 
-	repo := NewCategoryRepo(db)
-	ctrl := NewCategoryCtrl(repo)
+	repo := NewRepo(db)
+	srvc := NewSrvc(repo)
+	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllCategories).Methods("GET")
 	route.HandleFunc("/{id}", ctrl.GetCategoryById).Methods("GET")

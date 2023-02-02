@@ -12,12 +12,12 @@ import (
 )
 
 type user_ctrl struct {
-	srvc interfaces.UserService
+	srvc interfaces.UserSrvc
 }
 
-func NewCtrl(repo interfaces.UserService) *user_ctrl {
+func NewCtrl(srvc interfaces.UserSrvc) *user_ctrl {
 
-	return &user_ctrl{srvc: repo}
+	return &user_ctrl{srvc}
 
 }
 
@@ -27,7 +27,7 @@ func (c *user_ctrl) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c *user_ctrl) GetById(w http.ResponseWriter, r *http.Request) {
+func (c *user_ctrl) GetUserById(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -38,7 +38,7 @@ func (c *user_ctrl) GetById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.srvc.GetById(id).Send(w)
+	c.srvc.GetUserById(id).Send(w)
 
 }
 
@@ -88,7 +88,7 @@ func (c *user_ctrl) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		libs.GetResponse(err.Error(), 400, true)
 		return
 	}
 

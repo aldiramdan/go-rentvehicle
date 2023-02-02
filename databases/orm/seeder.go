@@ -57,6 +57,16 @@ func seedUp(db *gorm.DB) error {
 			model: seeder.UserSeed,
 			size:  cap(seeder.UserSeed),
 		},
+		{
+			name:  "category",
+			model: seeder.CategorySeed,
+			size:  cap(seeder.CategorySeed),
+		},
+		{
+			name:  "vehicle",
+			model: seeder.VehicleSeed,
+			size:  cap(seeder.VehicleSeed),
+		},
 	}
 
 	for _, data := range seedModel {
@@ -75,6 +85,14 @@ func seedDown(db *gorm.DB) error {
 		{
 			name:  models.User{}.TableName(),
 			model: models.User{},
+		},
+		{
+			name:  models.Category{}.TableName(),
+			model: models.Category{},
+		},
+		{
+			name:  models.Vehicle{}.TableName(),
+			model: models.Vehicle{},
 		},
 	}
 

@@ -11,7 +11,7 @@ type vehicle_repo struct {
 	db *gorm.DB
 }
 
-func NewVehicleRepo(db *gorm.DB) *vehicle_repo {
+func NewRepo(db *gorm.DB) *vehicle_repo {
 	return &vehicle_repo{db}
 }
 
@@ -19,7 +19,10 @@ func (r *vehicle_repo) GetAllVehicles() (*models.Vehicles, error) {
 
 	var data models.Vehicles
 
-	if err := r.db.Preload("Category").Order("created_at DESC").Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Category").
+		Order("created_at DESC").
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to get data")
 	}
 
@@ -31,7 +34,9 @@ func (r *vehicle_repo) GetVehicleById(id uint64) (*models.Vehicle, error) {
 
 	var data models.Vehicle
 
-	if err := r.db.Preload("Category").First(&data, id).Error; err != nil {
+	if err := r.db.
+		Preload("Category").
+		First(&data, id).Error; err != nil {
 		return nil, err
 	}
 
@@ -43,7 +48,11 @@ func (r *vehicle_repo) GetPopulerVehicle() (*models.Vehicles, error) {
 
 	var data models.Vehicles
 
-	if err := r.db.Preload("Category").Order("rating DESC, total_rent DESC").Limit(5).Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Category").
+		Order("rating DESC, total_rent DESC").
+		Limit(5).
+		Find(&data).Error; err != nil {
 		return nil, err
 	}
 
@@ -55,7 +64,12 @@ func (r *vehicle_repo) SearchVehicle(query string) (*models.Vehicles, error) {
 
 	var data models.Vehicles
 
-	if err := r.db.Preload("Category").Order("created_at DESC").Joins("JOIN category ON category.category_id = vehicle.category_id AND LOWER(vehicle.name) LIKE ? OR LOWER(location) LIKE ? OR LOWER(category.name ) LIKE ? ", "%"+query+"%", "%"+query+"%", "%"+query+"%").Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Category").
+		Order("created_at DESC").
+		Joins("JOIN category ON category.category_id = vehicle.category_id").
+		Where("LOWER(vehicle.name) LIKE ? OR LOWER(location) LIKE ? OR LOWER(category.name) LIKE ?", "%"+query+"%", "%"+query+"%", ""+query+"").
+		Find(&data).Error; err != nil {
 		return nil, err
 	}
 
@@ -66,11 +80,15 @@ func (r *vehicle_repo) SearchVehicle(query string) (*models.Vehicles, error) {
 func (r *vehicle_repo) AddVehicle(data *models.Vehicle) (*models.Vehicle, error) {
 
 	var dataCategory models.Category
-	if err := r.db.First(&dataCategory, data.CategoryID).Error; err != nil {
+	if err := r.db.
+		First(&dataCategory, data.CategoryID).Error; err != nil {
 		return nil, errors.New("data category not found")
 	}
 
-	if err := r.db.Preload("Category").Create(data).Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Category").
+		Create(data).
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to create data")
 	}
 
@@ -81,11 +99,17 @@ func (r *vehicle_repo) AddVehicle(data *models.Vehicle) (*models.Vehicle, error)
 func (r *vehicle_repo) UpdateVehicle(data *models.Vehicle, id uint64) (*models.Vehicle, error) {
 
 	var dataCategory models.Category
-	if err := r.db.First(&dataCategory, data.CategoryID).Error; err != nil {
+	if err := r.db.
+		First(&dataCategory, data.CategoryID).Error; err != nil {
 		return nil, errors.New("data category not found")
 	}
 
-	if err := r.db.Model(&data).Preload("Category").Where("vehicle_id = ?", id).Updates(&data).Find(&data).Error; err != nil {
+	if err := r.db.
+		Model(&data).
+		Preload("Category").
+		Where("vehicle_id = ?", id).
+		Updates(&data).
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to update data")
 	}
 
@@ -97,7 +121,8 @@ func (r *vehicle_repo) DeleteVehicle(id uint64) (*models.Vehicle, error) {
 
 	var data models.Vehicle
 
-	if err := r.db.Delete(data, id).Error; err != nil {
+	if err := r.db.
+		Delete(data, id).Error; err != nil {
 		return nil, errors.New("failed to delete data")
 	}
 

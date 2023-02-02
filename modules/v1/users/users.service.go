@@ -19,25 +19,30 @@ func NewSrvc(repo interfaces.UserRepo) *user_service {
 
 func (s *user_service) GetAllUsers() *libs.Response {
 
-	data, err := s.repo.GetAllUsers()
+	result, err := s.repo.GetAllUsers()
 
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
 
-	return libs.GetResponse(data, 200, false)
+	return libs.GetResponse(result, 200, false)
 
 }
 
-func (s *user_service) GetById(id uint64) *libs.Response {
+func (s *user_service) GetUserById(id uint64) *libs.Response {
 
-	data, err := s.repo.GetById(id)
+	result, err := s.repo.GetUserById(id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return libs.GetResponse(err.Error(), 404, true)
+		default:
+			return libs.GetResponse(err.Error(), 500, true)
+		}
 	}
 
-	return libs.GetResponse(data, 200, false)
+	return libs.GetResponse(result, 200, false)
 
 }
 
@@ -68,7 +73,7 @@ func (s *user_service) AddUser(data *models.User) *libs.Response {
 
 func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
 
-	_, err := s.repo.GetById(id)
+	_, err := s.repo.GetUserById(id)
 
 	if err != nil {
 		switch err {
@@ -97,7 +102,7 @@ func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
 
 func (s *user_service) DeleteUser(id uint64) *libs.Response {
 
-	_, err := s.repo.GetById(id)
+	_, err := s.repo.GetUserById(id)
 
 	if err != nil {
 		switch err {

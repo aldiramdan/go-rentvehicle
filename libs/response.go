@@ -5,43 +5,6 @@ import (
 	"net/http"
 )
 
-type response struct {
-	Status      string      `json:"status"`
-	ErrorCode   int         `json:"error-code"`
-	RespMessage string      `json:"message"`
-	RespData    interface{} `json:"data"`
-}
-
-func ResponseJson(w http.ResponseWriter, code int, payload interface{}) error {
-
-	var resp response
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-
-	resp.Status = "success"
-	resp.ErrorCode = code
-	resp.RespMessage = getStatus(code)
-	resp.RespData = payload
-
-	return json.NewEncoder(w).Encode(resp)
-
-}
-
-func ResponseError(w http.ResponseWriter, code int, message string) error {
-
-	var resp response
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-
-	resp.Status = "error"
-	resp.ErrorCode = code
-	resp.RespMessage = message
-
-	return json.NewEncoder(w).Encode(resp)
-}
-
 type Response struct {
 	Code        int         `json:"-"`
 	Status      string      `json:"status"`
@@ -82,26 +45,32 @@ func GetResponse(data interface{}, code int, isError bool) *Response {
 	}
 }
 
-func getStatus(status int) string {
-	var desc string
-	switch status {
+func getStatus(code int) (desc string) {
+	switch code {
 	case 200:
 		desc = "OK"
 	case 201:
 		desc = "Created"
+	case 202:
+		desc = "Accepted"
+	case 304:
+		desc = "Not Modified"
 	case 400:
 		desc = "Bad Request"
 	case 401:
 		desc = "Unauthorized"
+	case 403:
+		desc = "Forbidden"
+	case 404:
+		desc = "Not Found"
+	case 415:
+		desc = "Unsupported Media Type"
 	case 500:
 		desc = "Internal Server Error"
-	case 501:
+	case 502:
 		desc = "Bad Gateway"
-	case 304:
-		desc = "Not Modified"
 	default:
-		desc = ""
+		desc = "Status Code Undefined"
 	}
-
-	return desc
+	return
 }

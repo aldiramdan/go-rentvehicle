@@ -3,11 +3,11 @@ package models
 import "time"
 
 type Reservation struct {
-	ReservationID   uint64    `gorm:"primaryKey" json:"id,omitempty"`
-	UserID          uint64    `gorm:"unique" json:"user_id"`
-	User            User      `gorm:"foreignKey:UserID; references:UserID;" json:"user,omitempty"`
-	VehicleID       uint64    `gorm:"unique" json:"vehicle_id"`
-	Vehicle         Vehicle   `gorm:"foreignKey:VehicleID; references:VehicleID;" json:"vehicle,omitempty"`
+	ReservationID   uint64 `gorm:"primaryKey" json:"id,omitempty"`
+	UserID          uint64 `gorm:"column:UserIdForUser"`
+	User            User
+	VehicleID       uint64 `gorm:"column:VehiclesIdForVehicles"`
+	Vehicle         Vehicle
 	StartDate       string    `json:"start_date"`
 	EndDate         string    `json:"end_date"`
 	Quantity        uint      `json:"quantity"`

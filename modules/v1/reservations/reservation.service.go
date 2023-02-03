@@ -42,6 +42,12 @@ func (s *reservation_srvc) GetReservationById(id uint64) *libs.Response {
 
 func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Response {
 
+	paymentCode, err := libs.PaymentCode()
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+	data.PaymentCode = paymentCode
+
 	result, err := s.repo.AddReservation(data)
 
 	if err != nil {

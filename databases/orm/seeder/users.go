@@ -13,6 +13,7 @@ var UserSeed = models.Users{
 		Address:   "localhost",
 		Phone:     "08123456789",
 		BirthDate: "02/01/1999",
+		IsActive:  true,
 		Picture:   "public/default_image.jpg",
 	},
 	{
@@ -25,6 +26,7 @@ var UserSeed = models.Users{
 		Address:   "localhost",
 		Phone:     "08123456789",
 		BirthDate: "02/01/1999",
+		IsActive:  true,
 		Picture:   "public/default_image.jpg",
 	},
 }

@@ -70,3 +70,20 @@ func CodeCrypto() (string, error) {
 	return base32.StdEncoding.EncodeToString(randomBytes)[:len], nil
 
 }
+
+func PaymentCode() (string, error) {
+
+	len := 6
+	randomBytes := make([]byte, 32)
+
+	_, err := rand.Read(randomBytes)
+
+	if err != nil {
+
+		return "", fmt.Errorf("could not hash password %w", err)
+
+	}
+
+	return base32.StdEncoding.EncodeToString(randomBytes)[:len], nil
+
+}

@@ -29,6 +29,7 @@ go.work
 
 ### VisualStudioCode ###
 .vscode
+.public
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

@@ -1,183 +1,98 @@
 package users
 
 import (
-	"encoding/json"
 	"net/http"
-	"strconv"
+	"os"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
-	res "github.com/aldiramdan/go-backend/helpers"
-	"github.com/aldiramdan/go-backend/modules/v1/interfaces"
-	"github.com/gorilla/mux"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
+	"github.com/aldiramdan/go-backend/interfaces"
+	"github.com/aldiramdan/go-backend/libs"
+	"github.com/asaskevich/govalidator"
+	"github.com/gorilla/schema"
 )
 
-type users_ctrl struct {
-	repo interfaces.UserRepo
+type user_ctrl struct {
+	srvc interfaces.UserSrvc
 }
 
-func NewUsersCtrl(repo interfaces.UserRepo) *users_ctrl {
+func NewCtrl(srvc interfaces.UserSrvc) *user_ctrl {
 
-	return &users_ctrl{repo}
-
-}
-
-func (c *users_ctrl) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-
-	result, err := c.repo.GetAllUsers()
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if len(*result) == 0 {
-		res.ResponseError(w, http.StatusNotFound, "Data user empty")
-		return
-	}
-
-	res.ResponseJson(w, http.StatusOK, result)
+	return &user_ctrl{srvc}
 
 }
 
-func (c *users_ctrl) GetByUserId(w http.ResponseWriter, r *http.Request) {
+func (c *user_ctrl) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
-
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	result, err := c.repo.GetByUserId(id)
-
-	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			res.ResponseError(w, http.StatusNotFound, "User not found")
-			return
-		default:
-			res.ResponseError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.GetAllUsers().Send(w)
 
 }
 
-func (c *users_ctrl) AddUser(w http.ResponseWriter, r *http.Request) {
+func (c *user_ctrl) GetUserById(w http.ResponseWriter, r *http.Request) {
+
+	user_id := r.Context().Value("user")
+
+	c.srvc.GetUserById(user_id.(uint64)).Send(w)
+
+}
+
+func (c *user_ctrl) AddUser(w http.ResponseWriter, r *http.Request) {
 
 	var data models.User
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
 		return
 	}
 
-	salt := 12
-	password := []byte(data.Password)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, salt)
-	data.Password = string(hashedPassword)
-
-	result, err := c.repo.AddUser(&data)
+	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	res.ResponseJson(w, http.StatusCreated, result)
+	c.srvc.AddUser(&data).Send(w)
 
 }
 
-func (c *users_ctrl) UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (c *user_ctrl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
-
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	user_id := r.Context().Value("user")
 
 	var data models.User
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
 		return
 	}
 
-	_, err = c.repo.GetByUserId(id)
+	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			res.ResponseError(w, http.StatusNotFound, "User not found")
-			return
-		default:
-			res.ResponseError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	salt := 12
-	password := []byte(data.Password)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, salt)
-	data.Password = string(hashedPassword)
-
-	result, err := c.repo.UpdateUser(&data, id)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.UpdateUser(&data, user_id.(uint64)).Send(w)
 
 }
 
-func (c *users_ctrl) DeleteUser(w http.ResponseWriter, r *http.Request) {
+func (c *user_ctrl) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
+	user_id := r.Context().Value("user")
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	_, err = c.repo.GetByUserId(id)
-
-	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			res.ResponseError(w, http.StatusNotFound, "User not found")
-			return
-		default:
-			res.ResponseError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	_, err = c.repo.DeleteUser(id)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	response := map[string]string{"message": "Users deleted successfully"}
-
-	res.ResponseJson(w, http.StatusOK, response)
+	c.srvc.DeleteUser(user_id.(uint64)).Send(w)
 
 }

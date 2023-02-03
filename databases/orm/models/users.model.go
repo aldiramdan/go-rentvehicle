@@ -1,21 +1,29 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
-	UserID    uint64    `gorm:"primaryKey" json:"users_id,omitempty"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	Password  string    `json:"password"`
-	Name      string    `json:"name"`
-	Gender    string    `json:"gender"`
-	Address   string    `json:"address"`
-	Phone     string    `json:"phone"`
-	BirthDate string    `json:"birth_date"`
-	Picture   string    `json:"picture"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	UserID      uint64    `gorm:"primaryKey" json:"id,omitempty" valid:"-"`
+	Username    string    `json:"username" valid:"required,type(string)"`
+	Email       string    `json:"email" valid:"required,email"`
+	Role        string    `gorm:"default: user" json:"role,omitempty" valid:"-"`
+	Password    string    `json:"password,omitempty" valid:"required,length(8|32)"`
+	Name        string    `json:"name" valid:"required,type(string)"`
+	Gender      string    `json:"gender" valid:"type(string)"`
+	Address     string    `json:"address" valid:"-"`
+	Phone       string    `json:"phone" valid:"-"`
+	BirthDate   string    `json:"birth_date" schema:"birth_date" valid:"-"`
+	TokenVerify string    `json:"token_verify" valid:"-"`
+	IsActive    bool      `gorm:"default: false" json:"is_active" valid:"-"`
+	Picture     string    `json:"picture" schema:"image" valid:"-"`
+	CreatedAt   time.Time `json:"created_at" valid:"-"`
+	UpdatedAt   time.Time `json:"updated_at" valid:"-"`
 }
 
 type Users []User
+
+func (User) TableName() string {
+	return "users"
+}

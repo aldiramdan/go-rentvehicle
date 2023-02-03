@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS reservation CASCADE;
 CREATE TABLE reservation (
     reservation_id BIGSERIAL PRIMARY KEY NOT NULL,
     user_id INT NOT NULL,

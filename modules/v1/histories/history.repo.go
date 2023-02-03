@@ -11,7 +11,7 @@ type history_repo struct {
 	db *gorm.DB
 }
 
-func NewHisotryRepo(db *gorm.DB) *history_repo {
+func NewRepo(db *gorm.DB) *history_repo {
 
 	return &history_repo{db}
 
@@ -25,12 +25,25 @@ func NewVehicleRepo(db *gorm.DB) *vehicle_repo {
 	return &vehicle_repo{db}
 }
 
-func (r *history_repo) GetAllHistories() (*models.Histories, error) {
+func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error) {
 
 	var data models.Histories
 
-	if err := r.db.Preload("User").Preload("Vehicle").Preload("Vehicle.Category").Order("created_at DESC").Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Reservation").
+		Preload("Reservation.User").
+		Preload("Reservation.Vehicle").
+		Preload("Reservation.Vehicle.Category").
+		Order("created_at DESC").
+		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
+		Joins("JOIN users ON users.user_id = reservation.user_id").
+		Where("reservation.user_id = ?", user_id).
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to get data")
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("data history is empty")
 	}
 
 	return &data, nil
@@ -41,7 +54,12 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 
 	var data models.History
 
-	if err := r.db.Preload("User").Preload("Vehicle").Preload("Vehicle.Category").First(&data, id).Error; err != nil {
+	if err := r.db.
+		Preload("Reservation").
+		Preload("Reservation.User").
+		Preload("Reservation.Vehicle").
+		Preload("Reservation.Vehicle.Category").
+		First(&data, id).Error; err != nil {
 		return nil, err
 	}
 
@@ -49,12 +67,26 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 
 }
 
-func (r *history_repo) SearchHistory(query string) (*models.Histories, error) {
+func (r *history_repo) SearchHistory(user_id uint64, query string) (*models.Histories, error) {
 
 	var data models.Histories
 
-	if err := r.db.Preload("User").Preload("Vehicle").Preload("Vehicle.Category").Order("created_at DESC").Joins("JOIN vehicle ON vehicle.vehicle_id = history.vehicle_id AND LOWER(vehicle.name) LIKE ?", "%"+query+"%").Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Reservation").
+		Preload("Reservation.User").
+		Preload("Reservation.Vehicle").
+		Preload("Reservation.Vehicle.Category").
+		Order("created_at DESC").
+		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
+		Joins("JOIN vehicle ON vehicle.vehicle_id = reservation.vehicle_id").
+		Joins("JOIN users ON users.user_id = reservation.user_id").
+		Where("LOWER(vehicle.name) LIKE ? AND reservation.user_id = ?", "%"+query+"%", user_id).
+		Find(&data).Error; err != nil {
 		return nil, err
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("search data history not found")
 	}
 
 	return &data, nil
@@ -63,17 +95,19 @@ func (r *history_repo) SearchHistory(query string) (*models.Histories, error) {
 
 func (r *history_repo) AddHistory(data *models.History) (*models.History, error) {
 
-	var dataUser models.User
-	if err := r.db.First(&dataUser, data.UserID).Error; err != nil {
-		return nil, errors.New("data user not found")
+	var dataReservation models.Reservation
+	if err := r.db.
+		First(&dataReservation, data.ReservationID).Error; err != nil {
+		return nil, errors.New("data reservation not found")
 	}
 
-	var dataVehicle models.Vehicle
-	if err := r.db.First(&dataVehicle, data.VehicleID).Error; err != nil {
-		return nil, errors.New("data vehicle not found")
-	}
-
-	if err := r.db.Preload("User").Preload("Vehicle").Preload("Vehicle.Category").Create(data).Find(&data).Error; err != nil {
+	if err := r.db.
+		Preload("Reservation").
+		Preload("Reservation.User").
+		Preload("Reservation.Vehicle").
+		Preload("Reservation.Vehicle.Category").
+		Create(data).
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to create data")
 	}
 
@@ -83,17 +117,21 @@ func (r *history_repo) AddHistory(data *models.History) (*models.History, error)
 
 func (r *history_repo) UpdateHistory(data *models.History, id uint64) (*models.History, error) {
 
-	var dataUser models.User
-	if err := r.db.First(&dataUser, data.UserID).Error; err != nil {
-		return nil, errors.New("data user not found")
+	var dataReservation models.Reservation
+	if err := r.db.
+		First(&dataReservation, id).Error; err != nil {
+		return nil, errors.New("data reservation not found")
 	}
 
-	var dataVehicle models.Vehicle
-	if err := r.db.First(&dataVehicle, data.VehicleID).Error; err != nil {
-		return nil, errors.New("data vehicle not found")
-	}
-
-	if err := r.db.Model(&data).Preload("User").Preload("Vehicle").Preload("Vehicle.Category").Where("history_id = ?", id).Updates(&data).Find(&data).Error; err != nil {
+	if err := r.db.
+		Model(&data).
+		Preload("Reservation").
+		Preload("Reservation.User").
+		Preload("Reservation.Vehicle").
+		Preload("Reservation.Vehicle.Category").
+		Where("history_id = ?", id).
+		Updates(&data).
+		Find(&data).Error; err != nil {
 		return nil, errors.New("failed to update data")
 	}
 
@@ -105,7 +143,8 @@ func (r *history_repo) DeleteHistory(id uint64) (*models.History, error) {
 
 	var data models.History
 
-	if err := r.db.Delete(data, id).Error; err != nil {
+	if err := r.db.
+		Delete(data, id).Error; err != nil {
 		return nil, err
 	}
 

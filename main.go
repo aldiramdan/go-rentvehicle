@@ -2,24 +2,14 @@ package main
 
 import (
 	"log"
-	"net/http"
+	"os"
 
-	"github.com/aldiramdan/go-backend/routers"
+	"github.com/aldiramdan/go-backend/configs"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-
-	r, err := routers.IndexRoute()
-	if err != nil {
+	if err := configs.Run(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println("app run on port :3080")
-	err = http.ListenAndServe("127.0.0.1:3080", r)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	
 }

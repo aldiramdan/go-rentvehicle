@@ -1,55 +1,37 @@
 package vehicles
 
 import (
-	"encoding/json"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
-	res "github.com/aldiramdan/go-backend/helpers"
-	"github.com/aldiramdan/go-backend/modules/v1/interfaces"
+	"github.com/aldiramdan/go-backend/interfaces"
+	"github.com/aldiramdan/go-backend/libs"
+	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
+	"github.com/gorilla/schema"
 )
 
 type vehicle_ctrl struct {
-	repo interfaces.VehicleRepo
+	srvc interfaces.VehicleSrvc
 }
 
-func NewVehicleCtrl(repo interfaces.VehicleRepo) *vehicle_ctrl {
+func NewCtrl(srvc interfaces.VehicleSrvc) *vehicle_ctrl {
 
-	return &vehicle_ctrl{repo}
+	return &vehicle_ctrl{srvc}
 
 }
 
 func (c *vehicle_ctrl) GetAllVehicles(w http.ResponseWriter, r *http.Request) {
 
-	result, err := c.repo.GetAllVehicles()
-
-	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if len(*result) == 0 {
-		res.ResponseError(w, http.StatusNotFound, "Data Vehicle empty")
-		return
-	}
-
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.GetAllVehicles().Send(w)
 
 }
 
 func (c *vehicle_ctrl) GetPopulerVehicle(w http.ResponseWriter, r *http.Request) {
 
-	result, err := c.repo.GetPopulerVehicle()
-
-	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.GetPopulerVehicle().Send(w)
 
 }
 
@@ -60,24 +42,11 @@ func (c *vehicle_ctrl) GetVehicleById(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	result, err := c.repo.GetVehicleById(id)
-
-	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			res.ResponseError(w, http.StatusNotFound, "Vehicle not found")
-			return
-		default:
-			res.ResponseError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.GetVehicleById(id).Send(w)
 
 }
 
@@ -87,23 +56,11 @@ func (c *vehicle_ctrl) SearchVehicle(w http.ResponseWriter, r *http.Request) {
 
 	query, ok := vars["s"]
 	if !ok {
-		res.ResponseError(w, http.StatusBadRequest, "Missing query parameter")
+		libs.GetResponse("Missing query parameter", 400, true).Send(w)
 		return
 	}
 
-	result, err := c.repo.SearchVehicle(query[0])
-
-	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if len(*result) == 0 {
-		res.ResponseError(w, http.StatusNotFound, "Vehicle not found")
-		return
-	}
-
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.SearchVehicle(query[0]).Send(w)
 
 }
 
@@ -111,21 +68,25 @@ func (c *vehicle_ctrl) AddVehicle(w http.ResponseWriter, r *http.Request) {
 
 	var data models.Vehicle
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	result, err := c.repo.AddVehicle(&data)
+	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.AddVehicle(&data).Send(w)
 
 }
 
@@ -136,40 +97,31 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
 	var data models.Vehicle
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err = schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusInternalServerError, err.Error())
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
 		return
 	}
 
-	_, err = c.repo.GetVehicleById(id)
+	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			res.ResponseError(w, http.StatusNotFound, "Vehicle not found")
-			return
-		default:
-			res.ResponseError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	result, err := c.repo.UpdateVehicle(&data, id)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	res.ResponseJson(w, http.StatusOK, result)
+	c.srvc.UpdateVehicle(&data, id).Send(w)
 
 }
 
@@ -180,32 +132,10 @@ func (c *vehicle_ctrl) DeleteVehicle(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	_, err = c.repo.GetVehicleById(id)
-
-	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			res.ResponseError(w, http.StatusNotFound, "Vehicle not found")
-			return
-		default:
-			res.ResponseError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	_, err = c.repo.DeleteVehicle(id)
-
-	if err != nil {
-		res.ResponseError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	response := map[string]string{"message": "Vehicle deleted successfully"}
-
-	res.ResponseJson(w, http.StatusOK, response)
+	c.srvc.DeleteVehicle(id).Send(w)
 
 }

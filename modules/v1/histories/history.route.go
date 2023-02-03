@@ -1,6 +1,7 @@
 package histories
 
 import (
+	"github.com/aldiramdan/go-backend/middlewares"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -9,14 +10,15 @@ func RouteHistory(rt *mux.Router, db *gorm.DB) {
 
 	route := rt.PathPrefix("/history").Subrouter()
 
-	repo := NewHisotryRepo(db)
-	ctrl := NewHistoryCtrl(repo)
+	repo := NewRepo(db)
+	srvc := NewSrvc(repo)
+	ctrl := NewCtrl(srvc)
 
-	route.HandleFunc("/", ctrl.GetAllHistories).Methods("GET")
-	route.HandleFunc("/{id}", ctrl.GetHistoryById).Methods("GET")
-	route.HandleFunc("/search/", ctrl.SearchHistory).Methods("GET")
-	route.HandleFunc("/", ctrl.AddHistory).Methods("POST")
-	route.HandleFunc("/{id}", ctrl.UpdateHistory).Methods("PUT")
-	route.HandleFunc("/{id}", ctrl.DeleteHistory).Methods("DElETE")
+	route.HandleFunc("/", middlewares.Handle(ctrl.GetAllHistories, middlewares.AuthMidle("user", "admin"))).Methods("GET")
+	route.HandleFunc("/{id}", middlewares.Handle(ctrl.GetHistoryById, middlewares.AuthMidle("admin"))).Methods("GET")
+	route.HandleFunc("/search/", middlewares.Handle(ctrl.SearchHistory, middlewares.AuthMidle("user", "admin"))).Methods("GET")
+	route.HandleFunc("/", middlewares.Handle(ctrl.AddHistory, middlewares.AuthMidle("admin"))).Methods("POST")
+	route.HandleFunc("/{id}", middlewares.Handle(ctrl.UpdateHistory, middlewares.AuthMidle("admin"))).Methods("PUT")
+	route.HandleFunc("/{id}", middlewares.Handle(ctrl.DeleteHistory, middlewares.AuthMidle("admin"))).Methods("DElETE")
 
 }

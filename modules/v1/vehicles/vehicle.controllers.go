@@ -1,14 +1,15 @@
 package vehicles
 
 import (
-	"encoding/json"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 )
 
 type vehicle_ctrl struct {
@@ -64,16 +65,20 @@ func (c *vehicle_ctrl) SearchVehicle(w http.ResponseWriter, r *http.Request) {
 
 func (c *vehicle_ctrl) AddVehicle(w http.ResponseWriter, r *http.Request) {
 
-	var data *models.Vehicle
+	var data models.Vehicle
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	c.srvc.AddVehicle(data).Send(w)
+	c.srvc.AddVehicle(&data).Send(w)
 
 }
 
@@ -88,16 +93,19 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var data *models.Vehicle
+	var data models.Vehicle
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err = schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 500, true)
 		return
 	}
 
-	c.srvc.UpdateVehicle(data, id).Send(w)
+	c.srvc.UpdateVehicle(&data, id).Send(w)
 
 }
 

@@ -21,7 +21,7 @@ func NewToken(id uint64, role string) *claims {
 		UserId: id,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
 		},
 	}
 

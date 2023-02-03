@@ -20,7 +20,7 @@ func AuthUploadFile() Middle {
 			if err != nil {
 				if err == http.ErrMissingFile {
 					imgName := "default_image.jpg"
-					ctx := context.WithValue(r.Context(), "imageName", "uploads/"+imgName)
+					ctx := context.WithValue(r.Context(), "imageName", "public/"+imgName)
 					next.ServeHTTP(w, r.WithContext(ctx))
 					return
 				}

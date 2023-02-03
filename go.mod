@@ -12,6 +12,8 @@ require (
 	gorm.io/gorm v1.24.3
 )
 
+require github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+
 require (
 	github.com/gorilla/schema v1.2.0
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

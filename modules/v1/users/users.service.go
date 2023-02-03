@@ -1,6 +1,8 @@
 package users
 
 import (
+	"os"
+
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
@@ -73,7 +75,7 @@ func (s *user_service) AddUser(data *models.User) *libs.Response {
 
 func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
 
-	_, err := s.repo.GetUserById(id)
+	datas, err := s.repo.GetUserById(id)
 
 	if err != nil {
 		switch err {
@@ -84,12 +86,18 @@ func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
 		}
 	}
 
-	hashPassword, err := libs.HashPassword(data.Password)
-	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+	if data.Password != "" {
+		hashPassword, err := libs.HashPassword(data.Password)
+		if err != nil {
+			return libs.GetResponse(err.Error(), 400, true)
+		}
+		data.Password = hashPassword
 	}
 
-	data.Password = hashPassword
+	if datas.Picture != "public/default_image.jpg" {
+		_ = os.Remove(datas.Picture)
+	}
+
 	result, err := s.repo.UpdateUser(data, id)
 
 	if err != nil {
@@ -102,7 +110,7 @@ func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
 
 func (s *user_service) DeleteUser(id uint64) *libs.Response {
 
-	_, err := s.repo.GetUserById(id)
+	data, err := s.repo.GetUserById(id)
 
 	if err != nil {
 		switch err {
@@ -111,6 +119,10 @@ func (s *user_service) DeleteUser(id uint64) *libs.Response {
 		default:
 			return libs.GetResponse(err.Error(), 500, true)
 		}
+	}
+
+	if data.Picture != "public/default_image.jpg" {
+		_ = os.Remove(data.Picture)
 	}
 
 	_, err = s.repo.DeleteUser(id)

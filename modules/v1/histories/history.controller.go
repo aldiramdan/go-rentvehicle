@@ -8,6 +8,7 @@ import (
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
+	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 )
 
@@ -36,7 +37,7 @@ func (c *history_ctrl) GetHistoryById(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -52,7 +53,7 @@ func (c *history_ctrl) SearchHistory(w http.ResponseWriter, r *http.Request) {
 
 	query, ok := vars["s"]
 	if !ok {
-		libs.GetResponse("Missing query parameter", 400, true)
+		libs.GetResponse("Missing query parameter", 400, true).Send(w)
 		return
 	}
 
@@ -67,7 +68,14 @@ func (c *history_ctrl) AddHistory(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -81,7 +89,7 @@ func (c *history_ctrl) UpdateHistory(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -90,7 +98,14 @@ func (c *history_ctrl) UpdateHistory(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -105,7 +120,7 @@ func (c *history_ctrl) DeleteHistory(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 

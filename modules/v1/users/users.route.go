@@ -16,8 +16,8 @@ func RouteUsers(rt *mux.Router, db *gorm.DB) {
 
 	route.HandleFunc("/", ctrl.AddUser).Methods("POST")
 	route.HandleFunc("/", middlewares.Handle(ctrl.GetAllUsers, middlewares.AuthMidle("admin"))).Methods("GET")
-	route.HandleFunc("/profile", middlewares.Handle(ctrl.GetUserById, middlewares.AuthMidle("user", "admin"))).Methods("GET")
-	route.HandleFunc("/profile/update", middlewares.Handle(ctrl.UpdateUser, middlewares.AuthMidle("user", "admin"))).Methods("PUT")
+	route.HandleFunc("/profile", middlewares.Handle(ctrl.GetUserById, middlewares.AuthUploadFile(), middlewares.AuthMidle("user", "admin"))).Methods("GET")
+	route.HandleFunc("/profile/update", middlewares.Handle(ctrl.UpdateUser, middlewares.AuthUploadFile(), middlewares.AuthMidle("user", "admin"))).Methods("PUT")
 	route.HandleFunc("/profile/delete", middlewares.Handle(ctrl.DeleteUser, middlewares.AuthMidle("user", "admin"))).Methods("DElETE")
 
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
+	"github.com/asaskevich/govalidator"
 
 	"github.com/gorilla/mux"
 )
@@ -35,7 +36,7 @@ func (c *category_ctrl) GetCategoryById(w http.ResponseWriter, r *http.Request) 
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -49,7 +50,7 @@ func (c *category_ctrl) SearchCategories(w http.ResponseWriter, r *http.Request)
 
 	query, ok := vars["s"]
 	if !ok {
-		libs.GetResponse("Missing query parameter", 400, true)
+		libs.GetResponse("Missing query parameter", 400, true).Send(w)
 		return
 	}
 
@@ -64,7 +65,14 @@ func (c *category_ctrl) AddCategory(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -79,7 +87,7 @@ func (c *category_ctrl) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -88,7 +96,14 @@ func (c *category_ctrl) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -103,7 +118,7 @@ func (c *category_ctrl) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 400, true)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 

@@ -1,12 +1,14 @@
 package users
 
 import (
-	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
+	"github.com/asaskevich/govalidator"
+	"github.com/gorilla/schema"
 )
 
 type user_ctrl struct {
@@ -35,16 +37,27 @@ func (c *user_ctrl) GetUserById(w http.ResponseWriter, r *http.Request) {
 
 func (c *user_ctrl) AddUser(w http.ResponseWriter, r *http.Request) {
 
-	var data *models.User
+	var data models.User
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
 		return
 	}
 
-	c.srvc.AddUser(data).Send(w)
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
+		return
+	}
+
+	c.srvc.AddUser(&data).Send(w)
 
 }
 
@@ -52,16 +65,27 @@ func (c *user_ctrl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	user_id := r.Context().Value("user")
 
-	var data *models.User
+	var data models.User
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	imageName := r.Context().Value("imageName").(string)
+	data.Picture = imageName
+
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true)
+		_ = os.Remove(imageName)
+		libs.GetResponse(err.Error(), 500, true).Send(w)
 		return
 	}
 
-	c.srvc.UpdateUser(data, user_id.(uint64)).Send(w)
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
+		return
+	}
+
+	c.srvc.UpdateUser(&data, user_id.(uint64)).Send(w)
 
 }
 

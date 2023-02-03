@@ -3,23 +3,23 @@ package models
 import "time"
 
 type Reservation struct {
-	ReservationID   uint64    `gorm:"primaryKey" json:"id,omitempty"`
-	UserID          uint64    `gorm:"foreignKey:UserID; references:UserID" json:"user_id"`
-	User            User      `json:"user_data"`
-	VehicleID       uint64    `gorm:"foreignKey:VehicleID; references:VehicleID" json:"vehicle_id"`
-	Vehicle         Vehicle   `json:"vehicle_data"`
-	StartDate       string    `json:"start_date"`
-	EndDate         string    `json:"end_date"`
-	Quantity        uint      `json:"quantity"`
-	PaymentCode     string    `json:"payment_code"`
-	PaymentMethod   string    `json:"payment_method"`
-	PaymentStatus   string    `gorm:"default: Pending" json:"payment_status"`
-	Prepayment      float64   `json:"prepayment"`
-	IsBooked        bool      `gorm:"default: false" json:"is_booked"`
-	Rating          float64   `json:"rating"`
-	TransactionDate time.Time `gorm:"default: now()" json:"transaction_date"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	ReservationID   uint64    `gorm:"primaryKey" json:"id,omitempty" valid:"-"`
+	UserID          uint64    `gorm:"foreignKey:UserID; references:UserID" json:"user_id" valid:"type(int)"`
+	User            User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"user_data" valid:"-"`
+	VehicleID       uint64    `gorm:"foreignKey:VehicleID; references:VehicleID" json:"vehicle_id" valid:"numeric"`
+	Vehicle         Vehicle   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"vehicle_data" valid:"-"`
+	StartDate       string    `json:"start_date" valid:"-"`
+	EndDate         string    `json:"end_date" valid:"-"`
+	Quantity        uint      `json:"quantity" valid:"numeric"`
+	PaymentCode     string    `json:"payment_code" valid:"-"`
+	PaymentMethod   string    `json:"payment_method" valid:"type(string)"`
+	PaymentStatus   string    `gorm:"default: Pending" json:"payment_status" valid:"type(string)"`
+	Prepayment      float64   `json:"prepayment" valid:"numeric"`
+	IsBooked        bool      `gorm:"default: false" json:"is_booked" valid:"-"`
+	Rating          float64   `json:"rating" valid:"numeric,length(1|5)"`
+	TransactionDate time.Time `gorm:"default: now()" json:"transaction_date" valid:"-"`
+	CreatedAt       time.Time `json:"created_at" valid:"-"`
+	UpdatedAt       time.Time `json:"updated_at" valid:"-"`
 }
 
 type Reservations []Reservation

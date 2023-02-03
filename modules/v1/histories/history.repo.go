@@ -31,8 +31,12 @@ func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error
 
 	if err := r.db.
 		Preload("Reservation").
-		Preload("Reservation.User").
-		Preload("Reservation.Vehicle").
+		Preload("Reservation.User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Reservation.Vehicle.Category").
 		Order("created_at DESC").
 		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
@@ -56,8 +60,12 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 
 	if err := r.db.
 		Preload("Reservation").
-		Preload("Reservation.User").
-		Preload("Reservation.Vehicle").
+		Preload("Reservation.User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Reservation.Vehicle.Category").
 		First(&data, id).Error; err != nil {
 		return nil, err
@@ -73,8 +81,12 @@ func (r *history_repo) SearchHistory(user_id uint64, query string) (*models.Hist
 
 	if err := r.db.
 		Preload("Reservation").
-		Preload("Reservation.User").
-		Preload("Reservation.Vehicle").
+		Preload("Reservation.User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Reservation.Vehicle.Category").
 		Order("created_at DESC").
 		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
@@ -103,8 +115,12 @@ func (r *history_repo) AddHistory(data *models.History) (*models.History, error)
 
 	if err := r.db.
 		Preload("Reservation").
-		Preload("Reservation.User").
-		Preload("Reservation.Vehicle").
+		Preload("Reservation.User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Reservation.Vehicle.Category").
 		Create(data).
 		Find(&data).Error; err != nil {
@@ -126,8 +142,12 @@ func (r *history_repo) UpdateHistory(data *models.History, id uint64) (*models.H
 	if err := r.db.
 		Model(&data).
 		Preload("Reservation").
-		Preload("Reservation.User").
-		Preload("Reservation.Vehicle").
+		Preload("Reservation.User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Reservation.Vehicle.Category").
 		Where("history_id = ?", id).
 		Updates(&data).

@@ -23,8 +23,12 @@ func (r *reservation_repo) GetAllReservations() (*models.Reservations, error) {
 	var data models.Reservations
 
 	if err := r.db.
-		Preload("User").
-		Preload("Vehicle").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Vehicle.Category").
 		Order("created_at DESC").
 		Find(&data).Error; err != nil {
@@ -44,8 +48,12 @@ func (r *reservation_repo) GetReservationById(id uint64) (*models.Reservation, e
 	var data models.Reservation
 
 	if err := r.db.
-		Preload("User").
-		Preload("Vehicle").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Vehicle.Category").
 		First(&data, id).Error; err != nil {
 		return nil, err
@@ -94,8 +102,12 @@ func (r *reservation_repo) AddReservation(data *models.Reservation) (*models.Res
 	}
 
 	if err := tx.
-		Preload("User").
-		Preload("Vehicle").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Vehicle.Category").
 		First(&data).Error; err != nil {
 		return nil, err
@@ -193,8 +205,12 @@ func (r *reservation_repo) Payment(data *models.Reservation, id uint64) (*models
 	}
 
 	if err := tx.
-		Preload("User").
-		Preload("Vehicle").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id")
+		}).
 		Preload("Vehicle.Category").
 		First(&data).Error; err != nil {
 		return nil, err

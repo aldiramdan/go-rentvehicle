@@ -7,6 +7,7 @@ import (
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
+	"github.com/gorilla/mux"
 )
 
 type auth_ctrl struct {
@@ -30,4 +31,20 @@ func (c *auth_ctrl) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.srvc.Login(&data).Send(w)
+
+}
+
+func (c *auth_ctrl) VerifyEmail(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	token, ok := vars["token"]
+
+	if !ok {
+		libs.GetResponse("Token not found in request", 400, true).Send(w)
+		return
+	}
+
+	c.srvc.VerifyEmail(token).Send(w)
+
 }

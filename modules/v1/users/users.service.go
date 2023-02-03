@@ -62,8 +62,20 @@ func (s *user_service) AddUser(data *models.User) *libs.Response {
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
-
 	data.Password = hashPassword
+
+	tokenVeify, err := libs.CodeCrypto()
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+	data.TokenVerify = tokenVeify
+
+	link := os.Getenv("BASE_URL") + "/auth/confirm_email/" + tokenVeify
+	err = libs.SendMail(data.Email, "Veify Email", link)
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+
 	result, err := s.repo.AddUser(data)
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)

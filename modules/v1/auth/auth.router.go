@@ -15,5 +15,6 @@ func RouteAuth(rt *mux.Router, db *gorm.DB) {
 	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/login", ctrl.Login).Methods("POST")
+	route.HandleFunc("/confirm_email/{token}", ctrl.VerifyEmail).Methods("GET")
 
 }

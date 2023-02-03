@@ -12,7 +12,12 @@ require (
 	gorm.io/gorm v1.24.3
 )
 
-require github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
+)
+
+require gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 
 require (
 	github.com/gorilla/schema v1.2.0

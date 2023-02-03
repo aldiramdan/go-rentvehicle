@@ -61,6 +61,19 @@ func (r *user_repo) GetByUsername(username string) (*models.User, error) {
 
 }
 
+func (r *user_repo) GetByToken(token string) (*models.User, error) {
+
+	var data models.User
+
+	if err := r.db.
+		First(&data, "token_verify = ?", token).Error; err != nil {
+		return nil, errors.New("failed to get data")
+	}
+
+	return &data, nil
+
+}
+
 func (r *user_repo) AddUser(data *models.User) (*models.User, error) {
 
 	if err := r.db.
@@ -115,6 +128,17 @@ func (r *user_repo) EmailExsist(email string) bool {
 
 	err := r.db.
 		First(&data, "email = ?", email)
+
+	return err.Error == nil
+
+}
+
+func (r *user_repo) TokenExsist(token string) bool {
+
+	var data models.User
+
+	err := r.db.
+		First(&data, "token_verify = ?", token)
 
 	return err.Error == nil
 

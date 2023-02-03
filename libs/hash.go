@@ -13,6 +13,7 @@ func HashPassword(password string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("could not hash password %w", err)
 	}
+
 	return string(hashedPassword), nil
 
 }

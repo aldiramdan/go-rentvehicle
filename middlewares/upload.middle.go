@@ -45,7 +45,7 @@ func AuthUploadFile() Middle {
 
 			_, err = file.Seek(0, io.SeekStart)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				libs.GetResponse(err.Error(), 500, true).Send(w)
 				return
 			}
 

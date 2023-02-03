@@ -1,6 +1,8 @@
 package vehicles
 
 import (
+	"os"
+
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
@@ -77,7 +79,7 @@ func (s *vehicle_service) AddVehicle(data *models.Vehicle) *libs.Response {
 }
 func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id uint64) *libs.Response {
 
-	_, err := s.repo.GetVehicleById(id)
+	datas, err := s.repo.GetVehicleById(id)
 
 	if err != nil {
 		switch err {
@@ -86,6 +88,10 @@ func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id uint64) *libs.R
 		default:
 			return libs.GetResponse(err.Error(), 500, true)
 		}
+	}
+
+	if datas.Picture != "public/default_image.jpg" {
+		_ = os.Remove(datas.Picture)
 	}
 
 	result, err := s.repo.UpdateVehicle(data, id)
@@ -99,7 +105,7 @@ func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id uint64) *libs.R
 }
 func (s *vehicle_service) DeleteVehicle(id uint64) *libs.Response {
 
-	_, err := s.repo.GetVehicleById(id)
+	data, err := s.repo.GetVehicleById(id)
 
 	if err != nil {
 		switch err {
@@ -108,6 +114,10 @@ func (s *vehicle_service) DeleteVehicle(id uint64) *libs.Response {
 		default:
 			return libs.GetResponse(err.Error(), 500, true)
 		}
+	}
+
+	if data.Picture != "public/default_image.jpg" {
+		_ = os.Remove(data.Picture)
 	}
 
 	_, err = s.repo.DeleteVehicle(id)

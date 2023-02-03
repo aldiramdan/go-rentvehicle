@@ -101,6 +101,7 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	err = schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
+		_ = os.Remove(imageName)
 		libs.GetResponse(err.Error(), 500, true)
 		return
 	}

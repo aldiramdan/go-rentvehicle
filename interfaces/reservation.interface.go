@@ -8,6 +8,7 @@ import (
 type ReservationRepo interface {
 	GetAllReservations() (*models.Reservations, error)
 	GetReservationById(id uint64) (*models.Reservation, error)
+	GetReservationByCode(paymentCode string) (*models.Reservation, error)
 	AddReservation(data *models.Reservation) (*models.Reservation, error)
 	Payment(data *models.Reservation, paymentCode string) (*models.Reservation, error)
 }

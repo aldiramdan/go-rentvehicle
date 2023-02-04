@@ -16,7 +16,8 @@ func AuthUploadFile() Middle {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			file, fileHeader, err := r.FormFile("image")
+			r.Body = http.MaxBytesReader(w, r.Body, 2*1024*1024)
+			file, fileHeader, err := r.FormFile("picture")
 			if err != nil {
 				if err == http.ErrMissingFile {
 					imgName := "default_image.jpg"
@@ -38,8 +39,8 @@ func AuthUploadFile() Middle {
 			}
 
 			filetype := http.DetectContentType(buff)
-			if filetype != "image/jpeg" && filetype != "image/png" {
-				libs.GetResponse(err.Error(), 401, true).Send(w)
+			if filetype != "image/jpeg" && filetype != "image/png" && filetype != "image/jpg" {
+				libs.GetResponse("file format is not allowed. Please upload a JPEG, JPG or PNG image", 401, true).Send(w)
 				return
 			}
 
@@ -61,7 +62,6 @@ func AuthUploadFile() Middle {
 			if err != nil {
 				_ = os.Remove(pathRes)
 				libs.GetResponse(err.Error(), 401, true).Send(w)
-
 				return
 			}
 

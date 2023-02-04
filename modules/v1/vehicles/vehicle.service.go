@@ -36,7 +36,12 @@ func (s *vehicle_service) GetVehicleById(id uint64) *libs.Response {
 	result, err := s.repo.GetVehicleById(id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 500, true)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return libs.GetResponse(err.Error(), 404, true)
+		default:
+			return libs.GetResponse(err.Error(), 500, true)
+		}
 	}
 
 	return libs.GetResponse(result, 200, false)

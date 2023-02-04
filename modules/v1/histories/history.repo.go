@@ -35,7 +35,7 @@ func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Reservation.Vehicle.Category").
 		Order("created_at DESC").
@@ -64,7 +64,7 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Reservation.Vehicle.Category").
 		First(&data, id).Error; err != nil {
@@ -85,7 +85,7 @@ func (r *history_repo) SearchHistory(user_id uint64, query string) (*models.Hist
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Reservation.Vehicle.Category").
 		Order("created_at DESC").
@@ -119,7 +119,7 @@ func (r *history_repo) AddHistory(data *models.History) (*models.History, error)
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Reservation.Vehicle.Category").
 		Create(data).
@@ -146,7 +146,7 @@ func (r *history_repo) UpdateHistory(data *models.History, id uint64) (*models.H
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Reservation.Vehicle.Category").
 		Where("history_id = ?", id).

@@ -73,22 +73,22 @@ func (c *reservation_ctrl) Payment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	paymentCode, ok := vars["payment_code"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("Payment Code not found in request", 400, true).Send(w)
 		return
 	}
 
 	var data *models.Reservation
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 500, true).Send(w)
 		return
 	}
 
-	c.srvc.Payment(data, id).Send(w)
+	c.srvc.Payment(data, paymentCode).Send(w)
 
 }

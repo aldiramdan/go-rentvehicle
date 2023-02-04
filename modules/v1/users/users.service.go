@@ -64,7 +64,7 @@ func (s *user_service) AddUser(data *models.User) *libs.Response {
 	}
 	data.Password = hashPassword
 
-	tokenVeify, err := libs.CodeCrypto()
+	tokenVeify, err := libs.CodeCrypt(32)
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}

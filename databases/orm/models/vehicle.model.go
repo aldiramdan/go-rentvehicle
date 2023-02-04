@@ -15,8 +15,8 @@ type Vehicle struct {
 	CategoryID  uint64    `gorm:"foreignKey:CategoryID; references:CategoryID;" schema:"category_id" json:"category_id" valid:"type(int)"`
 	Category    Category  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"category_data" valid:"-"`
 	Picture     string    `json:"picture,omitempty" schema:"image" valid:"-"`
-	Rating      float64   `gorm:"default: 0" json:"rating,omitempty" valid:"type(int),length(1|5)"`
-	TotalRent   int       `gorm:"default: 0" json:"total_rent,omitempty" valid:"-"`
+	Rating      float64   `gorm:"default: 0" json:"rating" valid:"type(int),length(1|5)"`
+	TotalRent   int       `gorm:"default: 0" json:"total_rent" valid:"-"`
 	CreatedAt   time.Time `json:"created_at" valid:"-"`
 	UpdatedAt   time.Time `json:"updated_at" valid:"-"`
 }

@@ -17,6 +17,6 @@ func RouteTransaction(rt *mux.Router, db *gorm.DB) {
 	route.HandleFunc("/", middlewares.Handle(ctrl.GetAllReservations, middlewares.AuthMidle("admin"))).Methods("GET")
 	route.HandleFunc("/{id}", middlewares.Handle(ctrl.GetReservationById, middlewares.AuthMidle("admin"))).Methods("GET")
 	route.HandleFunc("/", middlewares.Handle(ctrl.AddReservation, middlewares.AuthMidle("user", "admin"))).Methods("POST")
-	route.HandleFunc("/payment/{id}", middlewares.Handle(ctrl.Payment, middlewares.AuthMidle("user", "admin"))).Methods("PUT")
+	route.HandleFunc("/payment/{payment_code}", middlewares.Handle(ctrl.Payment, middlewares.AuthMidle("user", "admin"))).Methods("PUT")
 
 }

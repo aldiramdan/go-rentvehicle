@@ -9,12 +9,12 @@ type ReservationRepo interface {
 	GetAllReservations() (*models.Reservations, error)
 	GetReservationById(id uint64) (*models.Reservation, error)
 	AddReservation(data *models.Reservation) (*models.Reservation, error)
-	Payment(data *models.Reservation, id uint64) (*models.Reservation, error)
+	Payment(data *models.Reservation, paymentCode string) (*models.Reservation, error)
 }
 
 type ReservationSrvc interface {
 	GetAllReservations() *libs.Response
 	GetReservationById(id uint64) *libs.Response
 	AddReservation(data *models.Reservation) *libs.Response
-	Payment(data *models.Reservation, id uint64) *libs.Response
+	Payment(data *models.Reservation, paymentCode string) *libs.Response
 }

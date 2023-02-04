@@ -54,26 +54,8 @@ func CheckToken(token string) (*claims, error) {
 
 }
 
-func CodeCrypto() (string, error) {
+func CodeCrypt(len int) (string, error) {
 
-	len := 32
-	randomBytes := make([]byte, 32)
-
-	_, err := rand.Read(randomBytes)
-
-	if err != nil {
-
-		return "", fmt.Errorf("could not hash password %w", err)
-
-	}
-
-	return base32.StdEncoding.EncodeToString(randomBytes)[:len], nil
-
-}
-
-func PaymentCode() (string, error) {
-
-	len := 6
 	randomBytes := make([]byte, 32)
 
 	_, err := rand.Read(randomBytes)

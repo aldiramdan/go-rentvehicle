@@ -61,6 +61,10 @@ func (s *auth_service) VerifyEmail(token string) *libs.Response {
 		return libs.GetResponse("user is not exist", 401, true)
 	}
 
+	if user.IsActive {
+		return libs.GetResponse("already registered, you can login", 401, true)
+	}
+
 	var data models.User
 
 	data.IsActive = true

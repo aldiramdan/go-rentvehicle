@@ -27,7 +27,7 @@ func (r *reservation_repo) GetAllReservations() (*models.Reservations, error) {
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Vehicle.Category").
 		Order("created_at DESC").
@@ -52,7 +52,7 @@ func (r *reservation_repo) GetReservationById(id uint64) (*models.Reservation, e
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Vehicle.Category").
 		First(&data, id).Error; err != nil {
@@ -106,7 +106,7 @@ func (r *reservation_repo) AddReservation(data *models.Reservation) (*models.Res
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Vehicle.Category").
 		First(&data).Error; err != nil {
@@ -150,12 +150,10 @@ func (r *reservation_repo) AfterCreate(data *models.Reservation) error {
 		return errors.New("data vehicle not found")
 	}
 
-	newRating := libs.CalculateNewRating(dataVehicle.TotalRent, dataVehicle.Rating, data.Rating)
-
 	if err := r.db.
 		Model(&dataVehicle).
 		Where("vehicle_id = ?", data.VehicleID).
-		Updates(map[string]interface{}{"total_rent": dataVehicle.TotalRent + 1, "rating": newRating}).Error; err != nil {
+		Updates(map[string]interface{}{"total_rent": dataVehicle.TotalRent + 1}).Error; err != nil {
 		return errors.New("failed update data vehicle")
 	}
 
@@ -163,7 +161,7 @@ func (r *reservation_repo) AfterCreate(data *models.Reservation) error {
 
 }
 
-func (r *reservation_repo) Payment(data *models.Reservation, id uint64) (*models.Reservation, error) {
+func (r *reservation_repo) Payment(data *models.Reservation, paymentCode string) (*models.Reservation, error) {
 
 	tx := r.db.Begin()
 	defer func() {
@@ -177,7 +175,7 @@ func (r *reservation_repo) Payment(data *models.Reservation, id uint64) (*models
 		return nil, err
 	}
 
-	if err := r.BeforeUpdate(data, id); err != nil {
+	if err := r.BeforeUpdate(data, paymentCode); err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -190,16 +188,7 @@ func (r *reservation_repo) Payment(data *models.Reservation, id uint64) (*models
 		return nil, err
 	}
 
-	history := &models.History{
-		ReservationID: data.ReservationID,
-	}
-
-	if err := tx.Save(history).Error; err != nil {
-		tx.Rollback()
-		return nil, errors.New("failed to create history")
-	}
-
-	if err := r.AfterUpdate(data); err != nil {
+	if err := r.AfterUpdate(data, paymentCode); err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -209,7 +198,7 @@ func (r *reservation_repo) Payment(data *models.Reservation, id uint64) (*models
 			return db.Select("user_id, email, name, phone")
 		}).
 		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
-			return db.Select("vehicle_id, name, location, price, category_id")
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Vehicle.Category").
 		First(&data).Error; err != nil {
@@ -220,42 +209,31 @@ func (r *reservation_repo) Payment(data *models.Reservation, id uint64) (*models
 
 }
 
-func (r *reservation_repo) BeforeUpdate(data *models.Reservation, id uint64) error {
+func (r *reservation_repo) BeforeUpdate(data *models.Reservation, paymentCode string) error {
 
 	if err := r.db.
 		Model(data).
-		Where("reservation_id = ?", id).
+		Where("payment_code = ?", paymentCode).
 		Updates(&data).Error; err != nil {
 		return errors.New("failed to update data")
 	}
 
 	if err := r.db.
-		First(&data, id).Error; err != nil {
+		First(&data, "payment_code = ?", paymentCode).Error; err != nil {
 		return errors.New("data transaction not found")
-	}
-
-	if data.PaymentStatus == "Paid" {
-		return errors.New("payment complated")
 	}
 
 	return nil
 
 }
 
-func (r *reservation_repo) AfterUpdate(data *models.Reservation) error {
+func (r *reservation_repo) AfterUpdate(data *models.Reservation, paymentCode string) error {
 
 	var dataVehicle models.Vehicle
 
 	if err := r.db.
 		First(&dataVehicle, data.VehicleID).Error; err != nil {
 		return errors.New("data vehicle not found")
-	}
-
-	if err := r.db.
-		Model(&dataVehicle).
-		Where("vehicle_id = ?", data.VehicleID).
-		Update("stock", dataVehicle.Stock-data.Quantity).Error; err != nil {
-		return errors.New("failed update data vehicle")
 	}
 
 	if dataVehicle.Stock == 0 {
@@ -265,6 +243,22 @@ func (r *reservation_repo) AfterUpdate(data *models.Reservation) error {
 			Updates(map[string]interface{}{"status": "unavailable"}).Error; err != nil {
 			return errors.New("failed update data vehicle")
 		}
+	}
+
+	if err := r.db.
+		Model(&dataVehicle).
+		Where("vehicle_id = ?", data.VehicleID).
+		Update("stock", dataVehicle.Stock-data.Quantity).Error; err != nil {
+		return errors.New("failed update data vehicle")
+	}
+
+	newRating := libs.CalculateNewRating(dataVehicle.TotalRent, dataVehicle.Rating, data.Rating)
+
+	if err := r.db.
+		Model(&dataVehicle).
+		Where("vehicle_id = ?", data.VehicleID).
+		Updates(map[string]interface{}{"rating": newRating}).Error; err != nil {
+		return errors.New("failed update data vehicle")
 	}
 
 	return nil

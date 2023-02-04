@@ -42,10 +42,16 @@ func (s *reservation_srvc) GetReservationById(id uint64) *libs.Response {
 
 func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Response {
 
-	paymentCode, err := libs.PaymentCode()
+	paymentCode, err := libs.CodeCrypt(6)
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
+
+	if data.PaymentMethod == "Cash" {
+		data.IsBooked = true
+		data.PaymentStatus = "Paid"
+	}
+
 	data.PaymentCode = paymentCode
 
 	result, err := s.repo.AddReservation(data)
@@ -58,9 +64,9 @@ func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Respon
 
 }
 
-func (s *reservation_srvc) Payment(data *models.Reservation, id uint64) *libs.Response {
+func (s *reservation_srvc) Payment(data *models.Reservation, paymentCode string) *libs.Response {
 
-	result, err := s.repo.Payment(data, id)
+	result, err := s.repo.Payment(data, paymentCode)
 
 	if err != nil {
 		return libs.GetResponse(err.Error(), 500, true)

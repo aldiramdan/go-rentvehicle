@@ -63,6 +63,26 @@ func (r *reservation_repo) GetReservationById(id uint64) (*models.Reservation, e
 
 }
 
+func (r *reservation_repo) GetReservationByCode(paymentCode string) (*models.Reservation, error) {
+
+	var data models.Reservation
+
+	if err := r.db.
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
+		}).
+		Preload("Vehicle.Category").
+		First(&data, "payment_code = ?", paymentCode).Error; err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+
+}
+
 func (r *reservation_repo) AddReservation(data *models.Reservation) (*models.Reservation, error) {
 
 	tx := r.db.Begin()
@@ -180,8 +200,6 @@ func (r *reservation_repo) Payment(data *models.Reservation, paymentCode string)
 		return nil, err
 	}
 
-	data.PaymentStatus = "Paid"
-	data.IsBooked = true
 
 	if err := tx.Save(data).Error; err != nil {
 		tx.Rollback()

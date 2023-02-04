@@ -53,6 +53,7 @@ func (c *user_ctrl) AddUser(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
+		_ = os.Remove(imageName)
 		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
@@ -81,6 +82,7 @@ func (c *user_ctrl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
+		_ = os.Remove(imageName)
 		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}

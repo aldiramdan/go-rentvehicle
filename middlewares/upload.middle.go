@@ -16,7 +16,7 @@ func AuthUploadFile() Middle {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			file, fileHeader, err := r.FormFile("image")
+			file, fileHeader, err := r.FormFile("picture")
 			if err != nil {
 				if err == http.ErrMissingFile {
 					imgName := "default_image.jpg"

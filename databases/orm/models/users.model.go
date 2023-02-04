@@ -17,7 +17,7 @@ type User struct {
 	BirthDate   string    `json:"birth_date,omitempty" schema:"birth_date" valid:"-"`
 	TokenVerify string    `json:"token_verify,omitempty" valid:"-"`
 	IsActive    bool      `gorm:"default: false" json:"is_active,omitempty" valid:"-"`
-	Picture     string    `json:"picture,omitempty" schema:"image" valid:"-"`
+	Picture     string    `json:"picture,omitempty" valid:"-"`
 	CreatedAt   time.Time `json:"created_at" valid:"-"`
 	UpdatedAt   time.Time `json:"updated_at" valid:"-"`
 }

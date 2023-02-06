@@ -9,17 +9,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type user_service struct {
+type user_srvc struct {
 	repo interfaces.UserRepo
 }
 
-func NewSrvc(repo interfaces.UserRepo) *user_service {
+func NewSrvc(repo interfaces.UserRepo) *user_srvc {
 
-	return &user_service{repo}
+	return &user_srvc{repo}
 
 }
 
-func (s *user_service) GetAllUsers() *libs.Response {
+func (s *user_srvc) GetAllUsers() *libs.Response {
 
 	result, err := s.repo.GetAllUsers()
 
@@ -31,7 +31,21 @@ func (s *user_service) GetAllUsers() *libs.Response {
 
 }
 
-func (s *user_service) GetUserById(id uint64) *libs.Response {
+func (s *user_srvc) GetPageUsers(page, perpage int) *libs.Response {
+
+	offset := (page - 1) * perpage
+
+	result, err := s.repo.GetPageUsers(perpage, offset)
+
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+
+	return libs.GetResponse(result, 200, false)
+
+}
+
+func (s *user_srvc) GetUserById(id uint64) *libs.Response {
 
 	result, err := s.repo.GetUserById(id)
 
@@ -48,7 +62,7 @@ func (s *user_service) GetUserById(id uint64) *libs.Response {
 
 }
 
-func (s *user_service) AddUser(data *models.User) *libs.Response {
+func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 
 	if userExsist := s.repo.UserExsist(data.Username); userExsist {
 		return libs.GetResponse("username is already registered", 400, true)
@@ -85,7 +99,7 @@ func (s *user_service) AddUser(data *models.User) *libs.Response {
 
 }
 
-func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
+func (s *user_srvc) UpdateUser(data *models.User, id uint64) *libs.Response {
 
 	datas, err := s.repo.GetUserById(id)
 
@@ -120,7 +134,7 @@ func (s *user_service) UpdateUser(data *models.User, id uint64) *libs.Response {
 
 }
 
-func (s *user_service) DeleteUser(id uint64) *libs.Response {
+func (s *user_srvc) DeleteUser(id uint64) *libs.Response {
 
 	data, err := s.repo.GetUserById(id)
 

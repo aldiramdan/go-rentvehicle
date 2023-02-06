@@ -29,6 +29,20 @@ func (s *reservation_srvc) GetAllReservations() *libs.Response {
 
 }
 
+func (s *reservation_srvc) GetPageReservations(page, perpage int) *libs.Response {
+
+	offset := (page - 1) * perpage
+
+	result, err := s.repo.GetPageReservations(perpage, offset)
+
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+
+	return libs.GetResponse(result, 200, false)
+
+}
+
 func (s *reservation_srvc) GetReservationById(id uint64) *libs.Response {
 
 	result, err := s.repo.GetReservationById(id)

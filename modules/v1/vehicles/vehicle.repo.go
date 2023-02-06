@@ -34,6 +34,27 @@ func (r *vehicle_repo) GetAllVehicles() (*models.Vehicles, error) {
 
 }
 
+func (r *vehicle_repo) GetPageVehicles(limit, offset int) (*models.Vehicles, error) {
+
+	var data models.Vehicles
+
+	if err := r.db.
+		Preload("Category").
+		Order("created_at DESC").
+		Limit(limit).
+		Offset(offset).
+		Find(&data).Error; err != nil {
+		return nil, errors.New("failed to get data")
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("data vehicle is empty")
+	}
+
+	return &data, nil
+
+}
+
 func (r *vehicle_repo) GetVehicleById(id uint64) (*models.Vehicle, error) {
 
 	var data models.Vehicle

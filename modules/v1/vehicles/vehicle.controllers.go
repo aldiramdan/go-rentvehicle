@@ -35,6 +35,38 @@ func (c *vehicle_ctrl) GetPopulerVehicle(w http.ResponseWriter, r *http.Request)
 
 }
 
+func (c *vehicle_ctrl) GetPageVehicles(w http.ResponseWriter, r *http.Request) {
+
+	varsPage := r.URL.Query().Get("page")
+	varsPerPage := r.URL.Query().Get("perpage")
+
+	var page, perpage int
+	var err error
+
+	if varsPage != "" {
+		page, err = strconv.Atoi(varsPage)
+		if err != nil {
+			libs.GetResponse(err.Error(), 400, true).Send(w)
+			return
+		}
+	} else {
+		page = 1
+	}
+
+	if varsPerPage != "" {
+		perpage, err = strconv.Atoi(varsPerPage)
+		if err != nil {
+			libs.GetResponse(err.Error(), 400, true).Send(w)
+			return
+		}
+	} else {
+		perpage = 5
+	}
+
+	c.srvc.GetPageVehicles(page, perpage).Send(w)
+
+}
+
 func (c *vehicle_ctrl) GetVehicleById(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

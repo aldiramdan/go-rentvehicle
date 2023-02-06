@@ -43,6 +43,33 @@ func (r *reservation_repo) GetAllReservations() (*models.Reservations, error) {
 
 }
 
+func (r *reservation_repo) GetPageReservations(limit, offset int) (*models.Reservations, error) {
+
+	var data models.Reservations
+
+	if err := r.db.
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
+		}).
+		Preload("Vehicle.Category").
+		Order("created_at DESC").
+		Limit(limit).
+		Offset(offset).
+		Find(&data).Error; err != nil {
+		return nil, errors.New("failed to get data")
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("data reservation is empty")
+	}
+
+	return &data, nil
+
+}
+
 func (r *reservation_repo) GetReservationById(id uint64) (*models.Reservation, error) {
 
 	var data models.Reservation

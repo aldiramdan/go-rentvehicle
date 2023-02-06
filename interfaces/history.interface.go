@@ -7,6 +7,7 @@ import (
 
 type HistoryRepo interface {
 	GetAllHistories(user_id uint64) (*models.Histories, error)
+	GetPageHistories(user_id uint64, limit, offset int) (*models.Histories, error)
 	GetHistoryById(id uint64) (*models.History, error)
 	SearchHistory(user_id uint64, query string) (*models.Histories, error)
 	AddHistory(data *models.History) (*models.History, error)
@@ -16,6 +17,7 @@ type HistoryRepo interface {
 
 type HistorySrvc interface {
 	GetAllHistories(user_id uint64) *libs.Response
+	GetPageHistories(user_id uint64, page, perpage int) *libs.Response
 	GetHistoryById(id uint64) *libs.Response
 	SearchHistory(user_id uint64, query string) *libs.Response
 	AddHistory(data *models.History) *libs.Response

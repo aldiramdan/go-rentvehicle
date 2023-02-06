@@ -54,6 +54,37 @@ func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error
 
 }
 
+func (r *history_repo) GetPageHistories(user_id uint64, limit, offset int) (*models.Histories, error) {
+
+	var data models.Histories
+
+	if err := r.db.
+		Preload("Reservation").
+		Preload("Reservation.User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone")
+		}).
+		Preload("Reservation.Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id, rating")
+		}).
+		Preload("Reservation.Vehicle.Category").
+		Order("created_at DESC").
+		Joins("JOIN reservation ON reservation.reservation_id = history.reservation_id").
+		Joins("JOIN users ON users.user_id = reservation.user_id").
+		Where("reservation.user_id = ?", user_id).
+		Limit(limit).
+		Offset(offset).
+		Find(&data).Error; err != nil {
+		return nil, errors.New("failed to get data")
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("data history is empty")
+	}
+
+	return &data, nil
+
+}
+
 func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 
 	var data models.History

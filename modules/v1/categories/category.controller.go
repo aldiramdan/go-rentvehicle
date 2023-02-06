@@ -29,6 +29,38 @@ func (c *category_ctrl) GetAllCategories(w http.ResponseWriter, r *http.Request)
 
 }
 
+func (c *category_ctrl) GetPageCategories(w http.ResponseWriter, r *http.Request) {
+
+	varsPage := r.URL.Query().Get("page")
+	varsPerPage := r.URL.Query().Get("perpage")
+
+	var page, perpage int
+	var err error
+
+	if varsPage != "" {
+		page, err = strconv.Atoi(varsPage)
+		if err != nil {
+			libs.GetResponse(err.Error(), 400, true).Send(w)
+			return
+		}
+	} else {
+		page = 1
+	}
+
+	if varsPerPage != "" {
+		perpage, err = strconv.Atoi(varsPerPage)
+		if err != nil {
+			libs.GetResponse(err.Error(), 400, true).Send(w)
+			return
+		}
+	} else {
+		perpage = 5
+	}
+
+	c.srvc.GetPageCategories(page, perpage).Send(w)
+
+}
+
 func (c *category_ctrl) GetCategoryById(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

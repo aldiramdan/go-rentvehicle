@@ -15,6 +15,7 @@ func RouteHistory(rt *mux.Router, db *gorm.DB) {
 	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", middlewares.Handle(ctrl.GetAllHistories, middlewares.AuthMidle("user", "admin"))).Methods("GET")
+	route.HandleFunc("/p", middlewares.Handle(ctrl.GetPageHistories, middlewares.AuthMidle("user", "admin"))).Methods("GET")
 	route.HandleFunc("/{id}", middlewares.Handle(ctrl.GetHistoryById, middlewares.AuthMidle("admin"))).Methods("GET")
 	route.HandleFunc("/search/", middlewares.Handle(ctrl.SearchHistory, middlewares.AuthMidle("user", "admin"))).Methods("GET")
 	route.HandleFunc("/", middlewares.Handle(ctrl.AddHistory, middlewares.AuthMidle("admin"))).Methods("POST")

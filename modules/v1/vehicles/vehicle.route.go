@@ -15,6 +15,7 @@ func RouteVehicle(rt *mux.Router, db *gorm.DB) {
 	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllVehicles).Methods("GET")
+	route.HandleFunc("/p", ctrl.GetPageVehicles).Methods("GET")
 	route.HandleFunc("/", middlewares.Handle(ctrl.AddVehicle, middlewares.AuthUploadFile(), middlewares.AuthMidle("admin"))).Methods("POST")
 	route.HandleFunc("/search/", ctrl.SearchVehicle).Methods("GET")
 	route.HandleFunc("/popular", ctrl.GetPopulerVehicle).Methods("GET")

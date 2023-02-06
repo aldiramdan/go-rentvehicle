@@ -15,6 +15,7 @@ func RouteCategory(rt *mux.Router, db *gorm.DB) {
 	ctrl := NewCtrl(srvc)
 
 	route.HandleFunc("/", ctrl.GetAllCategories).Methods("GET")
+	route.HandleFunc("/p", ctrl.GetPageCategories).Methods("GET")
 	route.HandleFunc("/", middlewares.Handle(ctrl.AddCategory, middlewares.AuthMidle("admin"))).Methods("POST")
 	route.HandleFunc("/search/", ctrl.SearchCategories).Methods("GET")
 	route.HandleFunc("/{id}", ctrl.GetCategoryById).Methods("GET")

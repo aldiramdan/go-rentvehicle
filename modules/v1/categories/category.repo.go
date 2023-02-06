@@ -33,6 +33,26 @@ func (r *category_repo) GetAllCategories() (*models.Categories, error) {
 
 }
 
+func (r *category_repo) GetPageCategories(limit, offset int) (*models.Categories, error) {
+
+	var data models.Categories
+
+	if err := r.db.
+		Order("created_at DESC").
+		Limit(limit).
+		Offset(offset).
+		Find(&data).Error; err != nil {
+		return nil, errors.New("failed to get data")
+	}
+
+	if len(data) == 0 {
+		return nil, errors.New("data category is empty")
+	}
+
+	return &data, nil
+
+}
+
 func (r *category_repo) GetCategoryById(id uint64) (*models.Category, error) {
 
 	var data models.Category

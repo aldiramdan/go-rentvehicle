@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
@@ -34,6 +35,7 @@ func (s *user_srvc) GetAllUsers() *libs.Response {
 func (s *user_srvc) GetPageUsers(page, perpage int) *libs.Response {
 
 	offset := (page - 1) * perpage
+	fmt.Println(page, perpage, offset)
 
 	result, err := s.repo.GetPageUsers(perpage, offset)
 

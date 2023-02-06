@@ -12,11 +12,11 @@ type Vehicle struct {
 	Price       float64   `json:"price,omitempty" valid:"numeric"`
 	Status      string    `json:"status,omitempty" valid:"type(string)"`
 	Stock       uint      `json:"stock,omitempty" valid:"numeric"`
-	CategoryID  string    `gorm:"foreignKey:CategoryID; references:CategoryID;" schema:"category_id" json:"category_id" valid:"uuidv4"`
+	CategoryID  string    `json:"category_id" gorm:"foreignKey:CategoryID; references:CategoryID;" schema:"category_id" valid:"uuidv4" `
 	Category    Category  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"category_data" valid:"-"`
 	Picture     string    `json:"picture,omitempty" valid:"-"`
-	Rating      float64   `gorm:"default: 0" json:"rating,omitempty" valid:"type(float64),range(1|5)"`
-	TotalRent   int       `gorm:"default: 0" json:"total_rent,omitempty" valid:"-"`
+	Rating      float64   `json:"rating,omitempty" gorm:"default: 0" valid:"type(float64),range(1|5)"`
+	TotalRent   int       `json:"total_rent,omitempty" gorm:"default: 0" valid:"-"`
 	CreatedAt   time.Time `json:"created_at" valid:"-"`
 	UpdatedAt   time.Time `json:"updated_at" valid:"-"`
 }

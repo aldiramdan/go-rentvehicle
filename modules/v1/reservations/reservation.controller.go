@@ -88,7 +88,7 @@ func (c *reservation_ctrl) AddReservation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(&data)
+	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 400, true).Send(w)

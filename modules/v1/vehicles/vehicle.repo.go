@@ -129,7 +129,7 @@ func (r *vehicle_repo) UpdateVehicle(data *models.Vehicle, id string) (*models.V
 
 	var dataCategory models.Category
 	if err := r.db.
-		First(&dataCategory, data.CategoryID).Error; err != nil {
+		First(&dataCategory, "category_id", data.CategoryID).Error; err != nil {
 		return nil, errors.New("data category not found")
 	}
 

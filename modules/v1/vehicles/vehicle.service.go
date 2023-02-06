@@ -31,6 +31,20 @@ func (s *vehicle_service) GetAllVehicles() *libs.Response {
 
 }
 
+func (s *vehicle_service) GetPageVehicles(page, perpage int) *libs.Response {
+
+	offset := (page - 1) * perpage
+
+	result, err := s.repo.GetPageVehicles(perpage, offset)
+
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+
+	return libs.GetResponse(result, 200, false)
+
+}
+
 func (s *vehicle_service) GetVehicleById(id uint64) *libs.Response {
 
 	result, err := s.repo.GetVehicleById(id)

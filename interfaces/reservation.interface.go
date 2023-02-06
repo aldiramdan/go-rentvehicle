@@ -7,6 +7,7 @@ import (
 
 type ReservationRepo interface {
 	GetAllReservations() (*models.Reservations, error)
+	GetPageReservations(limit, offset int) (*models.Reservations, error)
 	GetReservationById(id uint64) (*models.Reservation, error)
 	GetReservationByCode(paymentCode string) (*models.Reservation, error)
 	AddReservation(data *models.Reservation) (*models.Reservation, error)
@@ -15,6 +16,7 @@ type ReservationRepo interface {
 
 type ReservationSrvc interface {
 	GetAllReservations() *libs.Response
+	GetPageReservations(page, perpage int) *libs.Response
 	GetReservationById(id uint64) *libs.Response
 	AddReservation(data *models.Reservation) *libs.Response
 	Payment(data *models.Reservation, paymentCode string) *libs.Response

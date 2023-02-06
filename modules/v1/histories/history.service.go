@@ -29,6 +29,20 @@ func (s *history_service) GetAllHistories(user_id uint64) *libs.Response {
 
 }
 
+func (s *history_service) GetPageHistories(user_id uint64, page, perpage int) *libs.Response {
+
+	offset := (page - 1) * perpage
+
+	result, err := s.repo.GetPageHistories(user_id, perpage, offset)
+
+	if err != nil {
+		return libs.GetResponse(err.Error(), 500, true)
+	}
+
+	return libs.GetResponse(result, 200, false)
+
+}
+
 func (s *history_service) GetHistoryById(id uint64) *libs.Response {
 
 	result, err := s.repo.GetHistoryById(id)

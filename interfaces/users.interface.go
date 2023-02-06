@@ -7,6 +7,7 @@ import (
 
 type UserRepo interface {
 	GetAllUsers() (*models.Users, error)
+	GetPageUsers(limit, offset int) (*models.Users, error)
 	GetUserById(id uint64) (*models.User, error)
 	GetByUsername(username string) (*models.User, error)
 	GetByToken(token string) (*models.User, error)
@@ -20,6 +21,7 @@ type UserRepo interface {
 
 type UserSrvc interface {
 	GetAllUsers() *libs.Response
+	GetPageUsers(limit, offset int) *libs.Response
 	GetUserById(id uint64) *libs.Response
 	AddUser(data *models.User) *libs.Response
 	UpdateUser(data *models.User, id uint64) *libs.Response

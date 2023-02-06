@@ -7,6 +7,7 @@ import (
 
 type VehicleRepo interface {
 	GetAllVehicles() (*models.Vehicles, error)
+	GetPageVehicles(limit, offset int) (*models.Vehicles, error)
 	GetVehicleById(id uint64) (*models.Vehicle, error)
 	GetPopulerVehicle() (*models.Vehicles, error)
 	SearchVehicle(query string) (*models.Vehicles, error)
@@ -17,6 +18,7 @@ type VehicleRepo interface {
 
 type VehicleSrvc interface {
 	GetAllVehicles() *libs.Response
+	GetPageVehicles(page, perpage int) *libs.Response
 	GetVehicleById(id uint64) *libs.Response
 	GetPopulerVehicle() *libs.Response
 	SearchVehicle(query string) *libs.Response

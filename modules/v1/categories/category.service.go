@@ -26,6 +26,21 @@ func (s *cateogry_service) GetAllCategories() *libs.Response {
 	}
 
 	return libs.GetResponse(result, 200, false)
+
+}
+
+func (s *cateogry_service) GetPageCategories(page, perpage int) *libs.Response {
+
+	offset := (page - 1) * perpage
+
+	result, err := s.repo.GetPageCategories(perpage, offset)
+
+	if err != nil {
+		return libs.GetResponse(err.Error(), 400, true)
+	}
+
+	return libs.GetResponse(result, 200, false)
+
 }
 
 func (s *cateogry_service) GetCategoryById(id uint64) *libs.Response {

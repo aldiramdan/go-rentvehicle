@@ -6,21 +6,21 @@ import (
 )
 
 type HistoryRepo interface {
-	GetAllHistories(user_id uint64) (*models.Histories, error)
-	GetPageHistories(user_id uint64, limit, offset int) (*models.Histories, error)
-	GetHistoryById(id uint64) (*models.History, error)
-	SearchHistory(user_id uint64, query string) (*models.Histories, error)
+	GetAllHistories(user_id string) (*models.Histories, error)
+	GetPageHistories(user_id string, limit, offset int) (*models.Histories, error)
+	GetHistoryById(id string) (*models.History, error)
+	SearchHistory(user_id string, query string) (*models.Histories, error)
 	AddHistory(data *models.History) (*models.History, error)
-	UpdateHistory(data *models.History, id uint64) (*models.History, error)
-	DeleteHistory(id uint64) (*models.History, error)
+	UpdateHistory(data *models.History, id string) (*models.History, error)
+	DeleteHistory(id string) (*models.History, error)
 }
 
 type HistorySrvc interface {
-	GetAllHistories(user_id uint64) *libs.Response
-	GetPageHistories(user_id uint64, page, perpage int) *libs.Response
-	GetHistoryById(id uint64) *libs.Response
-	SearchHistory(user_id uint64, query string) *libs.Response
+	GetAllHistories(user_id string) *libs.Response
+	GetPageHistories(user_id string, page, perpage int) *libs.Response
+	GetHistoryById(id string) *libs.Response
+	SearchHistory(user_id string, query string) *libs.Response
 	AddHistory(data *models.History) *libs.Response
-	UpdateHistory(data *models.History, id uint64) *libs.Response
-	DeleteHistory(id uint64) *libs.Response
+	UpdateHistory(data *models.History, id string) *libs.Response
+	DeleteHistory(id string) *libs.Response
 }

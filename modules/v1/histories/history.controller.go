@@ -26,7 +26,7 @@ func (c *history_ctrl) GetAllHistories(w http.ResponseWriter, r *http.Request) {
 
 	user_id := r.Context().Value("user")
 
-	c.srvc.GetAllHistories(user_id.(uint64)).Send(w)
+	c.srvc.GetAllHistories(user_id.(string)).Send(w)
 
 }
 
@@ -60,7 +60,7 @@ func (c *history_ctrl) GetPageHistories(w http.ResponseWriter, r *http.Request) 
 		perpage = 5
 	}
 
-	c.srvc.GetPageHistories(user_id.(uint64), page, perpage).Send(w)
+	c.srvc.GetPageHistories(user_id.(string), page, perpage).Send(w)
 
 }
 
@@ -68,10 +68,10 @@ func (c *history_ctrl) GetHistoryById(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (c *history_ctrl) SearchHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.srvc.SearchHistory(user_id.(uint64), query[0]).Send(w)
+	c.srvc.SearchHistory(user_id.(string), query[0]).Send(w)
 
 }
 
@@ -121,15 +121,16 @@ func (c *history_ctrl) UpdateHistory(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	id, ok := vars["id"]
+
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
 	var data *models.History
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 500, true).Send(w)
@@ -151,10 +152,10 @@ func (c *history_ctrl) DeleteHistory(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 

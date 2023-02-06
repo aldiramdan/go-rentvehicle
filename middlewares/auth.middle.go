@@ -26,7 +26,7 @@ func AuthMidle(role ...string) Middle {
 
 			token := strings.Replace(header, "Bearer ", "", -1)
 
-			checkToken, err := libs.CheckToken(token)
+			checkToken, err := libs.VerifyToken(token)
 			if err != nil {
 				libs.GetResponse(err.Error(), 401, true).Send(w)
 				return

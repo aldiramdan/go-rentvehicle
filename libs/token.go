@@ -13,12 +13,12 @@ import (
 var mySecret = []byte(os.Getenv("JWT_KEYS"))
 
 type claims struct {
-	UserId uint64
+	UserId string
 	Role   string
 	jwt.RegisteredClaims
 }
 
-func NewToken(id uint64, role string) *claims {
+func NewToken(id string, role string) *claims {
 
 	return &claims{
 		UserId: id,
@@ -38,7 +38,7 @@ func (c *claims) Create() (string, error) {
 
 }
 
-func CheckToken(token string) (*claims, error) {
+func VerifyToken(token string) (*claims, error) {
 
 	tokens, err := jwt.ParseWithClaims(token, &claims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(mySecret), nil

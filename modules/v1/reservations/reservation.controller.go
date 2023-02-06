@@ -64,10 +64,10 @@ func (c *reservation_ctrl) GetReservationById(w http.ResponseWriter, r *http.Req
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
@@ -88,14 +88,14 @@ func (c *reservation_ctrl) AddReservation(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(data)
+	_, err = govalidator.ValidateStruct(&data)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
-	data.UserID = user_id.(uint64)
+	data.UserID = user_id.(string)
 
 	c.srvc.AddReservation(data).Send(w)
 

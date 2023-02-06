@@ -17,7 +17,7 @@ func NewSrvc(repo interfaces.HistoryRepo) *history_service {
 
 }
 
-func (s *history_service) GetAllHistories(user_id uint64) *libs.Response {
+func (s *history_service) GetAllHistories(user_id string) *libs.Response {
 
 	result, err := s.repo.GetAllHistories(user_id)
 
@@ -29,7 +29,7 @@ func (s *history_service) GetAllHistories(user_id uint64) *libs.Response {
 
 }
 
-func (s *history_service) GetPageHistories(user_id uint64, page, perpage int) *libs.Response {
+func (s *history_service) GetPageHistories(user_id string, page, perpage int) *libs.Response {
 
 	offset := (page - 1) * perpage
 
@@ -43,7 +43,7 @@ func (s *history_service) GetPageHistories(user_id uint64, page, perpage int) *l
 
 }
 
-func (s *history_service) GetHistoryById(id uint64) *libs.Response {
+func (s *history_service) GetHistoryById(id string) *libs.Response {
 
 	result, err := s.repo.GetHistoryById(id)
 
@@ -60,7 +60,7 @@ func (s *history_service) GetHistoryById(id uint64) *libs.Response {
 
 }
 
-func (s *history_service) SearchHistory(user_id uint64, query string) *libs.Response {
+func (s *history_service) SearchHistory(user_id string, query string) *libs.Response {
 
 	result, err := s.repo.SearchHistory(user_id, query)
 
@@ -84,7 +84,7 @@ func (s *history_service) AddHistory(data *models.History) *libs.Response {
 
 }
 
-func (s *history_service) UpdateHistory(data *models.History, id uint64) *libs.Response {
+func (s *history_service) UpdateHistory(data *models.History, id string) *libs.Response {
 
 	datas, err := s.repo.GetHistoryById(id)
 
@@ -111,7 +111,7 @@ func (s *history_service) UpdateHistory(data *models.History, id uint64) *libs.R
 
 }
 
-func (s *history_service) DeleteHistory(id uint64) *libs.Response {
+func (s *history_service) DeleteHistory(id string) *libs.Response {
 
 	_, err := s.repo.GetHistoryById(id)
 

@@ -70,7 +70,7 @@ func (r *reservation_repo) GetPageReservations(limit, offset int) (*models.Reser
 
 }
 
-func (r *reservation_repo) GetReservationById(id uint64) (*models.Reservation, error) {
+func (r *reservation_repo) GetReservationById(id string) (*models.Reservation, error) {
 
 	var data models.Reservation
 
@@ -82,7 +82,7 @@ func (r *reservation_repo) GetReservationById(id uint64) (*models.Reservation, e
 			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Vehicle.Category").
-		First(&data, id).Error; err != nil {
+		First(&data, "reservation_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -168,13 +168,13 @@ func (r *reservation_repo) BeforeCreate(data *models.Reservation) error {
 
 	var dataUser models.User
 	if err := r.db.
-		First(&dataUser, data.UserID).Error; err != nil {
+		First(&dataUser, "user_id = ?", data.UserID).Error; err != nil {
 		return errors.New("data user not found")
 	}
 
 	var dataVehicle models.Vehicle
 	if err := r.db.
-		First(&dataVehicle, data.VehicleID).Error; err != nil {
+		First(&dataVehicle, "vehicle_id = ?", data.VehicleID).Error; err != nil {
 		return errors.New("data vehicle not found")
 	}
 
@@ -193,7 +193,7 @@ func (r *reservation_repo) AfterCreate(data *models.Reservation) error {
 	var dataVehicle models.Vehicle
 
 	if err := r.db.
-		First(&dataVehicle, data.VehicleID).Error; err != nil {
+		First(&dataVehicle, "vehicle_id = ?", data.VehicleID).Error; err != nil {
 		return errors.New("data vehicle not found")
 	}
 
@@ -276,7 +276,7 @@ func (r *reservation_repo) AfterUpdate(data *models.Reservation, paymentCode str
 	var dataVehicle models.Vehicle
 
 	if err := r.db.
-		First(&dataVehicle, data.VehicleID).Error; err != nil {
+		First(&dataVehicle, "vehicle_id = ?", data.VehicleID).Error; err != nil {
 		return errors.New("data vehicle not found")
 	}
 

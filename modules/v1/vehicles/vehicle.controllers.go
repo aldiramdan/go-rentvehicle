@@ -71,10 +71,10 @@ func (c *vehicle_ctrl) GetVehicleById(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
@@ -126,10 +126,10 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
@@ -138,7 +138,7 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	imageName := r.Context().Value("imageName").(string)
 	data.Picture = imageName
 
-	err = schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
+	err := schema.NewDecoder().Decode(&data, r.MultipartForm.Value)
 
 	if err != nil {
 		_ = os.Remove(imageName)
@@ -161,10 +161,10 @@ func (c *vehicle_ctrl) DeleteVehicle(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 

@@ -64,7 +64,7 @@ func (c *user_ctrl) GetUserById(w http.ResponseWriter, r *http.Request) {
 
 	user_id := r.Context().Value("user")
 
-	c.srvc.GetUserById(user_id.(uint64)).Send(w)
+	c.srvc.GetUserById(user_id.(string)).Send(w)
 
 }
 
@@ -120,7 +120,7 @@ func (c *user_ctrl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.srvc.UpdateUser(&data, user_id.(uint64)).Send(w)
+	c.srvc.UpdateUser(&data, user_id.(string)).Send(w)
 
 }
 
@@ -128,6 +128,6 @@ func (c *user_ctrl) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	user_id := r.Context().Value("user")
 
-	c.srvc.DeleteUser(user_id.(uint64)).Send(w)
+	c.srvc.DeleteUser(user_id.(string)).Send(w)
 
 }

@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"net/http"
+
 	"github.com/aldiramdan/go-backend/databases/orm"
 	"github.com/aldiramdan/go-backend/modules/v1/auth"
 	"github.com/aldiramdan/go-backend/modules/v1/categories"
@@ -20,6 +22,9 @@ func IndexRoute() (*mux.Router, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	var imgServer = http.FileServer(http.Dir("./public/"))
+	mainRoute.PathPrefix("/public/").Handler(http.StripPrefix("/public/", imgServer))
 
 	auth.RouteAuth(mainRoute, db)
 	users.RouteUsers(mainRoute, db)

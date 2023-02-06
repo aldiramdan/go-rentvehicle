@@ -45,7 +45,7 @@ func (s *user_srvc) GetPageUsers(page, perpage int) *libs.Response {
 
 }
 
-func (s *user_srvc) GetUserById(id uint64) *libs.Response {
+func (s *user_srvc) GetUserById(id string) *libs.Response {
 
 	result, err := s.repo.GetUserById(id)
 
@@ -99,7 +99,7 @@ func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 
 }
 
-func (s *user_srvc) UpdateUser(data *models.User, id uint64) *libs.Response {
+func (s *user_srvc) UpdateUser(data *models.User, id string) *libs.Response {
 
 	datas, err := s.repo.GetUserById(id)
 
@@ -134,7 +134,7 @@ func (s *user_srvc) UpdateUser(data *models.User, id uint64) *libs.Response {
 
 }
 
-func (s *user_srvc) DeleteUser(id uint64) *libs.Response {
+func (s *user_srvc) DeleteUser(id string) *libs.Response {
 
 	data, err := s.repo.GetUserById(id)
 

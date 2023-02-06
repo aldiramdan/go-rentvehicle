@@ -25,7 +25,7 @@ func NewVehicleRepo(db *gorm.DB) *vehicle_repo {
 	return &vehicle_repo{db}
 }
 
-func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error) {
+func (r *history_repo) GetAllHistories(user_id string) (*models.Histories, error) {
 
 	var data models.Histories
 
@@ -54,7 +54,7 @@ func (r *history_repo) GetAllHistories(user_id uint64) (*models.Histories, error
 
 }
 
-func (r *history_repo) GetPageHistories(user_id uint64, limit, offset int) (*models.Histories, error) {
+func (r *history_repo) GetPageHistories(user_id string, limit, offset int) (*models.Histories, error) {
 
 	var data models.Histories
 
@@ -85,7 +85,7 @@ func (r *history_repo) GetPageHistories(user_id uint64, limit, offset int) (*mod
 
 }
 
-func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
+func (r *history_repo) GetHistoryById(id string) (*models.History, error) {
 
 	var data models.History
 
@@ -98,7 +98,7 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 			return db.Select("vehicle_id, name, location, price, category_id, rating")
 		}).
 		Preload("Reservation.Vehicle.Category").
-		First(&data, id).Error; err != nil {
+		First(&data, "history_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -106,7 +106,7 @@ func (r *history_repo) GetHistoryById(id uint64) (*models.History, error) {
 
 }
 
-func (r *history_repo) SearchHistory(user_id uint64, query string) (*models.Histories, error) {
+func (r *history_repo) SearchHistory(user_id string, query string) (*models.Histories, error) {
 
 	var data models.Histories
 
@@ -162,7 +162,7 @@ func (r *history_repo) AddHistory(data *models.History) (*models.History, error)
 
 }
 
-func (r *history_repo) UpdateHistory(data *models.History, id uint64) (*models.History, error) {
+func (r *history_repo) UpdateHistory(data *models.History, id string) (*models.History, error) {
 
 	var dataReservation models.Reservation
 	if err := r.db.
@@ -190,12 +190,12 @@ func (r *history_repo) UpdateHistory(data *models.History, id uint64) (*models.H
 
 }
 
-func (r *history_repo) DeleteHistory(id uint64) (*models.History, error) {
+func (r *history_repo) DeleteHistory(id string) (*models.History, error) {
 
 	var data models.History
 
 	if err := r.db.
-		Delete(data, id).Error; err != nil {
+		Delete(data, "history_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 

@@ -10,10 +10,12 @@ type UserRepo interface {
 	GetPageUsers(limit, offset int) (*models.Users, error)
 	GetUserById(id string) (*models.User, error)
 	GetByUsername(username string) (*models.User, error)
+	GetByEmail(email string) (*models.User, error)
 	GetByToken(token string) (*models.User, error)
 	AddUser(data *models.User) (*models.User, error)
 	UpdateUser(data *models.User, id string) (*models.User, error)
 	DeleteUser(id string) (*models.User, error)
+	UpdateToken(id, token string) error
 	UserExsist(username string) bool
 	EmailExsist(email string) bool
 	TokenExsist(token string) bool

@@ -8,4 +8,5 @@ import (
 type AuthSrvc interface {
 	Login(data *models.User) *libs.Response
 	VerifyEmail(token string) *libs.Response
+	ResendEmail(data *models.User) *libs.Response
 }

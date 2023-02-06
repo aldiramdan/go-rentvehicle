@@ -84,6 +84,19 @@ func (r *user_repo) GetByUsername(username string) (*models.User, error) {
 
 }
 
+func (r *user_repo) GetByEmail(email string) (*models.User, error) {
+
+	var data models.User
+
+	if err := r.db.
+		First(&data, "email = ?", email).Error; err != nil {
+		return nil, errors.New("failed to get data")
+	}
+
+	return &data, nil
+
+}
+
 func (r *user_repo) GetByToken(token string) (*models.User, error) {
 
 	var data models.User
@@ -131,6 +144,21 @@ func (r *user_repo) DeleteUser(id string) (*models.User, error) {
 	}
 
 	return &data, nil
+
+}
+
+func (r *user_repo) UpdateToken(id, token string) error {
+
+	var data models.User
+
+	if err := r.db.
+		Model(data).
+		Where("user_id = ?", id).
+		Update("token_verify", token).Error; err != nil {
+		return errors.New("failed to update data")
+	}
+
+	return nil
 
 }
 

@@ -48,3 +48,17 @@ func (c *auth_ctrl) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 	c.srvc.VerifyEmail(token).Send(w)
 
 }
+
+func (c *auth_ctrl) ResendEmail(w http.ResponseWriter, r *http.Request) {
+
+	var data models.User
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		libs.GetResponse(err.Error(), 401, true)
+		return
+	}
+
+	c.srvc.ResendEmail(&data).Send(w)
+
+}

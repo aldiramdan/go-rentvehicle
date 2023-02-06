@@ -43,7 +43,7 @@ func (s *reservation_srvc) GetPageReservations(page, perpage int) *libs.Response
 
 }
 
-func (s *reservation_srvc) GetReservationById(id uint64) *libs.Response {
+func (s *reservation_srvc) GetReservationById(id string) *libs.Response {
 
 	result, err := s.repo.GetReservationById(id)
 
@@ -72,7 +72,7 @@ func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Respon
 		data.PaymentStatus = "Paid"
 	}
 
-	data.PaymentCode = paymentCode
+	data.PaymentCode = "GRV-" + paymentCode
 
 	result, err := s.repo.AddReservation(data)
 

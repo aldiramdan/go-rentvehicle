@@ -57,13 +57,13 @@ func (r *user_repo) GetPageUsers(limit, offset int) (*models.Users, error) {
 
 }
 
-func (r *user_repo) GetUserById(id uint64) (*models.User, error) {
+func (r *user_repo) GetUserById(id string) (*models.User, error) {
 
 	var data models.User
 
 	if err := r.db.
 		Select("user_id, username, email, name, gender, address, phone, birth_date, picture").
-		First(&data, id).Error; err != nil {
+		Find(&data, "user_id = ?", id).Error; err != nil {
 		return nil, errors.New("failed to get data")
 	}
 
@@ -108,7 +108,7 @@ func (r *user_repo) AddUser(data *models.User) (*models.User, error) {
 
 }
 
-func (r *user_repo) UpdateUser(data *models.User, id uint64) (*models.User, error) {
+func (r *user_repo) UpdateUser(data *models.User, id string) (*models.User, error) {
 
 	if err := r.db.
 		Model(data).
@@ -121,12 +121,12 @@ func (r *user_repo) UpdateUser(data *models.User, id uint64) (*models.User, erro
 
 }
 
-func (r *user_repo) DeleteUser(id uint64) (*models.User, error) {
+func (r *user_repo) DeleteUser(id string) (*models.User, error) {
 
 	var data models.User
 
 	if err := r.db.
-		Delete(data, id).Error; err != nil {
+		Delete(data, "user_id = ?", id).Error; err != nil {
 		return nil, errors.New("failed to delete data")
 	}
 

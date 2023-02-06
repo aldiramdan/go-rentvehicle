@@ -65,10 +65,10 @@ func (c *category_ctrl) GetCategoryById(w http.ResponseWriter, r *http.Request) 
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
-
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	id, ok := vars["id"]
+	
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
@@ -116,16 +116,16 @@ func (c *category_ctrl) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 
 	var data *models.Category
 
-	err = json.NewDecoder(r.Body).Decode(&data)
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
 		libs.GetResponse(err.Error(), 500, true).Send(w)
@@ -147,10 +147,10 @@ func (c *category_ctrl) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	id, ok := vars["id"]
 
-	if err != nil {
-		libs.GetResponse(err.Error(), 400, true).Send(w)
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
 		return
 	}
 

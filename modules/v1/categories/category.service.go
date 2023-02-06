@@ -43,7 +43,7 @@ func (s *cateogry_service) GetPageCategories(page, perpage int) *libs.Response {
 
 }
 
-func (s *cateogry_service) GetCategoryById(id uint64) *libs.Response {
+func (s *cateogry_service) GetCategoryById(id string) *libs.Response {
 
 	result, err := s.repo.GetCategoryById(id)
 
@@ -84,7 +84,7 @@ func (s *cateogry_service) AddCategory(data *models.Category) *libs.Response {
 
 }
 
-func (s *cateogry_service) UpdateCategory(data *models.Category, id uint64) *libs.Response {
+func (s *cateogry_service) UpdateCategory(data *models.Category, id string) *libs.Response {
 
 	_, err := s.repo.GetCategoryById(id)
 
@@ -107,7 +107,7 @@ func (s *cateogry_service) UpdateCategory(data *models.Category, id uint64) *lib
 
 }
 
-func (s *cateogry_service) DeleteCategory(id uint64) *libs.Response {
+func (s *cateogry_service) DeleteCategory(id string) *libs.Response {
 
 	_, err := s.repo.GetCategoryById(id)
 

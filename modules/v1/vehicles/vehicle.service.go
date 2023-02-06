@@ -45,7 +45,7 @@ func (s *vehicle_service) GetPageVehicles(page, perpage int) *libs.Response {
 
 }
 
-func (s *vehicle_service) GetVehicleById(id uint64) *libs.Response {
+func (s *vehicle_service) GetVehicleById(id string) *libs.Response {
 
 	result, err := s.repo.GetVehicleById(id)
 
@@ -96,7 +96,7 @@ func (s *vehicle_service) AddVehicle(data *models.Vehicle) *libs.Response {
 	return libs.GetResponse(result, 200, false)
 
 }
-func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id uint64) *libs.Response {
+func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id string) *libs.Response {
 
 	datas, err := s.repo.GetVehicleById(id)
 
@@ -122,7 +122,7 @@ func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id uint64) *libs.R
 	return libs.GetResponse(result, 200, false)
 
 }
-func (s *vehicle_service) DeleteVehicle(id uint64) *libs.Response {
+func (s *vehicle_service) DeleteVehicle(id string) *libs.Response {
 
 	data, err := s.repo.GetVehicleById(id)
 

@@ -5,12 +5,12 @@ import (
 )
 
 type User struct {
-	UserID      uint64    `gorm:"primaryKey" json:"id,omitempty" valid:"-"`
-	Username    string    `json:"username,omitempty" valid:"required,type(string)"`
-	Email       string    `json:"email,omitempty" valid:"required,email"`
+	UserID      string    `gorm:"type:uuid; primaryKey; default:uuid_generate_v4()" json:"id,omitempty" valid:"-"`
+	Username    string    `json:"username,omitempty" valid:"type(string),required"`
+	Email       string    `json:"email,omitempty" valid:"email,required"`
 	Role        string    `gorm:"default: user" json:"role,omitempty" valid:"-"`
-	Password    string    `json:"password,omitempty" valid:"required,length(8|32)"`
-	Name        string    `json:"name,omitempty" valid:"required,type(string)"`
+	Password    string    `json:"password,omitempty" valid:"length(8|32),required"`
+	Name        string    `json:"name,omitempty" valid:"type(string),required"`
 	Gender      string    `json:"gender,omitempty" valid:"type(string)"`
 	Address     string    `json:"address,omitempty" valid:"-"`
 	Phone       string    `json:"phone,omitempty" valid:"-"`

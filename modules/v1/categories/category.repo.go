@@ -53,12 +53,12 @@ func (r *category_repo) GetPageCategories(limit, offset int) (*models.Categories
 
 }
 
-func (r *category_repo) GetCategoryById(id uint64) (*models.Category, error) {
+func (r *category_repo) GetCategoryById(id string) (*models.Category, error) {
 
 	var data models.Category
 
 	if err := r.db.
-		First(&data, id).Error; err != nil {
+		First(&data, "category_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -96,7 +96,7 @@ func (r *category_repo) AddCategory(data *models.Category) (*models.Category, er
 
 }
 
-func (r *category_repo) UpdateCategory(data *models.Category, id uint64) (*models.Category, error) {
+func (r *category_repo) UpdateCategory(data *models.Category, id string) (*models.Category, error) {
 
 	if err := r.db.
 		Model(&data).
@@ -109,12 +109,12 @@ func (r *category_repo) UpdateCategory(data *models.Category, id uint64) (*model
 
 }
 
-func (r *category_repo) DeleteCategory(id uint64) (*models.Category, error) {
+func (r *category_repo) DeleteCategory(id string) (*models.Category, error) {
 
 	var data models.Category
 
 	if err := r.db.
-		Delete(data, id).Error; err != nil {
+		Delete(data, "category_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 

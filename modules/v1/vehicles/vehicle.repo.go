@@ -55,13 +55,13 @@ func (r *vehicle_repo) GetPageVehicles(limit, offset int) (*models.Vehicles, err
 
 }
 
-func (r *vehicle_repo) GetVehicleById(id uint64) (*models.Vehicle, error) {
+func (r *vehicle_repo) GetVehicleById(id string) (*models.Vehicle, error) {
 
 	var data models.Vehicle
 
 	if err := r.db.
 		Preload("Category").
-		First(&data, id).Error; err != nil {
+		First(&data, "vehicle_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -110,7 +110,7 @@ func (r *vehicle_repo) AddVehicle(data *models.Vehicle) (*models.Vehicle, error)
 
 	var dataCategory models.Category
 	if err := r.db.
-		First(&dataCategory, data.CategoryID).Error; err != nil {
+		First(&dataCategory, "category_id = ?", data.CategoryID).Error; err != nil {
 		return nil, errors.New("data category not found")
 	}
 
@@ -125,7 +125,7 @@ func (r *vehicle_repo) AddVehicle(data *models.Vehicle) (*models.Vehicle, error)
 
 }
 
-func (r *vehicle_repo) UpdateVehicle(data *models.Vehicle, id uint64) (*models.Vehicle, error) {
+func (r *vehicle_repo) UpdateVehicle(data *models.Vehicle, id string) (*models.Vehicle, error) {
 
 	var dataCategory models.Category
 	if err := r.db.
@@ -146,12 +146,12 @@ func (r *vehicle_repo) UpdateVehicle(data *models.Vehicle, id uint64) (*models.V
 
 }
 
-func (r *vehicle_repo) DeleteVehicle(id uint64) (*models.Vehicle, error) {
+func (r *vehicle_repo) DeleteVehicle(id string) (*models.Vehicle, error) {
 
 	var data models.Vehicle
 
 	if err := r.db.
-		Delete(data, id).Error; err != nil {
+		Delete(data, "vehicle_id = ?", id).Error; err != nil {
 		return nil, errors.New("failed to delete data")
 	}
 

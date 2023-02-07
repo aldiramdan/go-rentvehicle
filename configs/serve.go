@@ -22,7 +22,7 @@ func serve(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var address string = "0.0.0.0:8080"
+	var address string = "127.0.0.1:8080"
 	if PORT := os.Getenv("PORT"); PORT != "" {
 		address = "127.0.0.1:" + PORT
 	}

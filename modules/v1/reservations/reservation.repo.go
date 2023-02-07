@@ -197,6 +197,24 @@ func (r *reservation_repo) AfterCreate(data *models.Reservation) error {
 		return errors.New("data vehicle not found")
 	}
 
+	if data.PaymentMethod == "Cash" {
+		if err := r.db.
+			Model(&dataVehicle).
+			Where("vehicle_id = ?", data.VehicleID).
+			Update("stock", dataVehicle.Stock-data.Quantity).Error; err != nil {
+			return errors.New("failed update data vehicle")
+		}
+
+		newRating := libs.CalculateNewRating(dataVehicle.TotalRent, dataVehicle.Rating, data.Rating)
+
+		if err := r.db.
+			Model(&dataVehicle).
+			Where("vehicle_id = ?", data.VehicleID).
+			Updates(map[string]interface{}{"rating": newRating}).Error; err != nil {
+			return errors.New("failed update data vehicle")
+		}
+	}
+
 	if err := r.db.
 		Model(&dataVehicle).
 		Where("vehicle_id = ?", data.VehicleID).

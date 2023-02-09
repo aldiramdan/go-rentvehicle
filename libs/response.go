@@ -15,6 +15,9 @@ type Response struct {
 
 func (res *Response) Send(w http.ResponseWriter) {
 	w.Header().Set("Content-type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-CSRF-Token")
 
 	if res.IsError {
 		w.WriteHeader(res.Code)

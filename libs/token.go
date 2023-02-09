@@ -1,9 +1,6 @@
 package libs
 
 import (
-	"crypto/rand"
-	"encoding/base32"
-	"fmt"
 	"os"
 	"time"
 
@@ -51,21 +48,5 @@ func VerifyToken(token string) (*claims, error) {
 	claims := tokens.Claims.(*claims)
 
 	return claims, nil
-
-}
-
-func CodeCrypt(len int) (string, error) {
-
-	randomBytes := make([]byte, 32)
-
-	_, err := rand.Read(randomBytes)
-
-	if err != nil {
-
-		return "", fmt.Errorf("could not hash password %w", err)
-
-	}
-
-	return base32.StdEncoding.EncodeToString(randomBytes)[:len], nil
 
 }

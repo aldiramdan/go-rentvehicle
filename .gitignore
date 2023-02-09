@@ -36,7 +36,6 @@ go.work
 !.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
-public
 .history/
 
 # Built Visual Studio Code Extensions
@@ -46,5 +45,9 @@ public
 # Ignore all local history of files
 .history
 .ionide
+
+# Local App
+public/*
+databases/pg_data
 
 # End of https://www.toptal.com/developers/gitignore/api/go,dotenv,visualstudiocode

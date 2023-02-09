@@ -45,9 +45,7 @@ func (s *auth_srvc) Login(data *models.User) *libs.Response {
 		return libs.GetResponse(err.Error(), 401, true)
 	}
 
-	newToken := "Bearer " + token
-
-	return libs.GetResponse(token_response{Token: newToken}, 200, false)
+	return libs.GetResponse(token_response{Token: token}, 200, false)
 
 }
 
@@ -102,8 +100,13 @@ func (s *auth_srvc) ResendEmail(data *models.User) *libs.Response {
 
 	data.TokenVerify = tokenVeify
 
-	link := os.Getenv("BASE_URL") + "/auth/confirm_email/" + tokenVeify
-	err = libs.SendMail(data.Email, "Veify Email", link)
+	emailData := libs.EmailData{
+		URL:      os.Getenv("BASE_URL") + "/auth/confirm_email/" + tokenVeify,
+		Username: data.Username,
+		Subject:  "Your account verification code",
+	}
+
+	err = libs.SendMail(data, &emailData)
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}

@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  app:
+    image: aldiramdan/gorentveh
+    container_name: go_container
+    env_file:
+      - .env
+    tty: true
+    ports:
+      - '3090:3080'
+    restart: on-failure
+    depends_on:
+      - pgdb
+    networks:
+      - godev
+
+  pgdb:
+    image: postgres:15
+    container_name: pg_container
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${PG_HOST}
+    ports:
+      - '5431:5432'
+    volumes:
+      - ./databases/pg_data:/var/lib/postgresql/data
+    networks:
+      - godev
+
+volumes:
+  pg_data:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  godev:
+    driver: bridge

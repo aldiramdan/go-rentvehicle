@@ -84,10 +84,16 @@ func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
+
 	data.TokenVerify = tokenVeify
 
-	link := os.Getenv("BASE_URL") + "/auth/confirm_email/" + tokenVeify
-	err = libs.SendMail(data.Email, "Veify Email", link)
+	emailData := libs.EmailData{
+		URL:      os.Getenv("BASE_URL") + "/auth/confirm_email/" + tokenVeify,
+		Username: data.Username,
+		Subject:  "Your account verification code",
+	}
+
+	err = libs.SendMail(data, &emailData)
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}

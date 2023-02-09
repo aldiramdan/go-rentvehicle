@@ -13,8 +13,9 @@ func ConnectDB() (*gorm.DB, error) {
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
 
-	config := fmt.Sprintf("host=%s user=%s password=%s dbname=%s", dbHost, dbUser, dbPass, dbName)
+	config := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", dbHost, dbPort, dbUser, dbPass, dbName)
 
 	DB, err := gorm.Open(postgres.Open(config), &gorm.Config{})
 

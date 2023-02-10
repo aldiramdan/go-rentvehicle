@@ -178,6 +178,10 @@ func (r *reservation_repo) BeforeCreate(data *models.Reservation) error {
 		return errors.New("data vehicle not found")
 	}
 
+	if dataVehicle.Status != "Available" {
+		return errors.New("vehicle not available")
+	}
+
 	qty := dataVehicle.Stock - data.Quantity
 
 	if int(qty) < 0 {

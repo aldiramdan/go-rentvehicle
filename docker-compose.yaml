@@ -1,7 +1,9 @@
 version: '3.9'
 services:
   app:
-    image: aldiramdan/gorentveh
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: go_container
     env_file:
       - .env
@@ -18,10 +20,10 @@ services:
     image: postgres:15
     container_name: pg_container
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
       - DATABASE_HOST=${PG_HOST}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
     ports:
       - '5431:5432'
     volumes:

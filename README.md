@@ -18,7 +18,7 @@ go get -u ./...
 go mod tidy
 ```
 
-4. Add Env
+3. Add Env
 
 ```sh
 # Keys Token
@@ -47,13 +47,13 @@ PORT = Your Port App
 BASE_URL = http://localhost:PORT //example
 ```
 
-5. Run the app
+4. Run the app
 
 ```bash
 go run *.go serve
 ```
 
-6. Database Migration and Seeder
+5. Database Migration and Seeder
 
 ```bash
 # Migration

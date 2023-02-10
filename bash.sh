@@ -1,1 +1,0 @@
-docker run -d -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=12345 -e POSTGRES_DB=go_backend -p 5431:5432 postgres:15

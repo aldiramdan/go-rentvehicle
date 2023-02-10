@@ -61,7 +61,7 @@ go run *.go migrate --up //db migration up
 # or
 go run *.go migrate --down //db migration down
 
-#   Seeder
+# Seeder
 go run *.go seeder --up //db seeder up
 # or
 go run *.go seeder --down /db seeder down

@@ -41,7 +41,7 @@ func (r *user_repo) GetPageUsers(limit, offset int) (*models.Users, error) {
 	var data models.Users
 
 	if err := r.db.
-		Select("user_id, username, email, name, gender, address, phone, birth_date, picture").
+		Select("user_id, username, email, name, gender, address, phone, birth_date, picture, created_at, updated_at").
 		Order("created_at DESC").
 		Limit(limit).
 		Offset(offset).
@@ -62,7 +62,7 @@ func (r *user_repo) GetUserById(id string) (*models.User, error) {
 	var data models.User
 
 	if err := r.db.
-		Select("user_id, username, email, name, gender, address, phone, birth_date, picture").
+		Select("user_id, username, email, name, gender, address, phone, birth_date, picture, created_at, updated_at").
 		Find(&data, "user_id = ?", id).Error; err != nil {
 		return nil, errors.New("failed to get data")
 	}

@@ -12,7 +12,9 @@ type category_repo struct {
 }
 
 func NewRepo(db *gorm.DB) *category_repo {
+
 	return &category_repo{db}
+	
 }
 
 func (r *category_repo) GetAllCategories() (*models.Categories, error) {

@@ -25,7 +25,6 @@ func SendMail(user *models.User, data *EmailData) error {
 		},
 	}
 
-	// Create an email body using hermes
 	emailBody, err := h.GenerateHTML(hermes.Email{
 		Body: hermes.Body{
 			Name: user.Username,

@@ -11,6 +11,7 @@ import (
 func AuthMidle(role ...string) Middle {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			
 			var header string
 			var isAllowed bool
 

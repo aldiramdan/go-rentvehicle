@@ -230,7 +230,7 @@ func (r *reservation_repo) AfterCreate(data *models.Reservation) error {
 
 }
 
-func (r *reservation_repo) Payment(data *models.Reservation, paymentCode string) (*models.Reservation, error) {
+func (r *reservation_repo) UpdateReservation(data *models.Reservation, paymentCode string) (*models.Reservation, error) {
 
 	tx := r.db.Begin()
 	defer func() {

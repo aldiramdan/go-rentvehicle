@@ -75,6 +75,21 @@ func (c *reservation_ctrl) GetReservationById(w http.ResponseWriter, r *http.Req
 
 }
 
+func (c *reservation_ctrl) GetReservationByCode(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	paymentCode, ok := vars["payment_code"]
+
+	if !ok {
+		libs.GetResponse("Payment Code not found in request", 400, true).Send(w)
+		return
+	}
+
+	c.srvc.GetReservationByCode(paymentCode).Send(w)
+
+}
+
 func (c *reservation_ctrl) AddReservation(w http.ResponseWriter, r *http.Request) {
 
 	user_id := r.Context().Value("user")
@@ -101,7 +116,7 @@ func (c *reservation_ctrl) AddReservation(w http.ResponseWriter, r *http.Request
 
 }
 
-func (c *reservation_ctrl) Payment(w http.ResponseWriter, r *http.Request) {
+func (c *reservation_ctrl) UpdateReservation(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -121,6 +136,6 @@ func (c *reservation_ctrl) Payment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.srvc.Payment(data, paymentCode).Send(w)
+	c.srvc.UpdateReservation(data, paymentCode).Send(w)
 
 }

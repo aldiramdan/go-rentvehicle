@@ -1,6 +1,8 @@
 package reservations
 
 import (
+	"fmt"
+
 	"github.com/aldiramdan/go-backend/databases/orm/models"
 	"github.com/aldiramdan/go-backend/interfaces"
 	"github.com/aldiramdan/go-backend/libs"
@@ -60,6 +62,23 @@ func (s *reservation_srvc) GetReservationById(id string) *libs.Response {
 
 }
 
+func (s *reservation_srvc) GetReservationByCode(paymentCode string) *libs.Response {
+
+	result, err := s.repo.GetReservationByCode(paymentCode)
+
+	if err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return libs.GetResponse(err.Error(), 404, true)
+		default:
+			return libs.GetResponse(err.Error(), 500, true)
+		}
+	}
+
+	return libs.GetResponse(result, 200, false)
+
+}
+
 func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Response {
 
 	paymentCode, err := libs.CodeCrypt(6)
@@ -72,7 +91,7 @@ func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Respon
 		data.PaymentStatus = "Paid"
 	}
 
-	data.PaymentCode = "GRV-" + paymentCode
+	data.PaymentCode = fmt.Sprintf("%s%s", "GRV-", paymentCode)
 
 	result, err := s.repo.AddReservation(data)
 
@@ -84,7 +103,7 @@ func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Respon
 
 }
 
-func (s *reservation_srvc) Payment(data *models.Reservation, paymentCode string) *libs.Response {
+func (s *reservation_srvc) UpdateReservation(data *models.Reservation, paymentCode string) *libs.Response {
 
 	datas, err := s.repo.GetReservationByCode(paymentCode)
 
@@ -99,12 +118,12 @@ func (s *reservation_srvc) Payment(data *models.Reservation, paymentCode string)
 
 	if datas.PaymentStatus == "Paid" {
 		return libs.GetResponse("Payment successfully", 400, true)
+	} else {
+		data.PaymentStatus = "Paid"
+		data.IsBooked = true
 	}
 
-	data.PaymentStatus = "Paid"
-	data.IsBooked = true
-
-	result, err := s.repo.Payment(data, paymentCode)
+	result, err := s.repo.UpdateReservation(data, paymentCode)
 
 	if err != nil {
 		return libs.GetResponse(err.Error(), 500, true)

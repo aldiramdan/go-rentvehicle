@@ -14,6 +14,7 @@ type Response struct {
 }
 
 func (res *Response) Send(w http.ResponseWriter) {
+
 	w.Header().Set("Content-type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
@@ -27,6 +28,7 @@ func (res *Response) Send(w http.ResponseWriter) {
 	if err != nil {
 		w.Write([]byte("Error When Encode respone"))
 	}
+
 }
 
 func GetResponse(data interface{}, code int, isError bool) *Response {
@@ -46,9 +48,11 @@ func GetResponse(data interface{}, code int, isError bool) *Response {
 		IsError: isError,
 		Data:    data,
 	}
+
 }
 
 func getStatus(code int) (desc string) {
+
 	switch code {
 	case 200:
 		desc = "OK"
@@ -75,5 +79,7 @@ func getStatus(code int) (desc string) {
 	default:
 		desc = "Status Code Undefined"
 	}
+	
 	return
+
 }

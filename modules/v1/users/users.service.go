@@ -98,10 +98,12 @@ func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
 
-	result, err := s.repo.AddUser(data)
+	dataUser, err := s.repo.AddUser(data)
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
+
+	result, _ := s.repo.GetUserById(dataUser.UserID)
 
 	return libs.GetResponse(result, 200, false)
 
@@ -132,11 +134,13 @@ func (s *user_srvc) UpdateUser(data *models.User, id string) *libs.Response {
 		_ = os.Remove(datas.Picture)
 	}
 
-	result, err := s.repo.UpdateUser(data, id)
+	dataUser, err := s.repo.UpdateUser(data, id)
 
 	if err != nil {
 		return libs.GetResponse(err.Error(), 400, true)
 	}
+
+	result, _ := s.repo.GetUserById(dataUser.UserID)
 
 	return libs.GetResponse(result, 200, false)
 

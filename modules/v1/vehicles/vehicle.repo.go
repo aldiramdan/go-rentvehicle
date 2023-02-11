@@ -12,7 +12,9 @@ type vehicle_repo struct {
 }
 
 func NewRepo(db *gorm.DB) *vehicle_repo {
+
 	return &vehicle_repo{db}
+	
 }
 
 func (r *vehicle_repo) GetAllVehicles() (*models.Vehicles, error) {

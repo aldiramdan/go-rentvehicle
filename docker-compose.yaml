@@ -28,7 +28,7 @@ services:
     ports:
       - '5431:5432'
     volumes:
-      - ./databases/pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     networks:
       - godev
 

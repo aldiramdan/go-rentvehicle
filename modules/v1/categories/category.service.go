@@ -36,7 +36,7 @@ func (s *cateogry_service) GetPageCategories(page, perpage int) *libs.Response {
 	result, err := s.repo.GetPageCategories(perpage, offset)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -100,7 +100,7 @@ func (s *cateogry_service) UpdateCategory(data *models.Category, id string) *lib
 	result, err := s.repo.UpdateCategory(data, id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -123,7 +123,7 @@ func (s *cateogry_service) DeleteCategory(id string) *libs.Response {
 	_, err = s.repo.DeleteCategory(id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	response := map[string]string{"message": "Vehicle deleted successfully"}

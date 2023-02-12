@@ -97,7 +97,7 @@ func (c *category_ctrl) AddCategory(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true).Send(w)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 
@@ -128,7 +128,7 @@ func (c *category_ctrl) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true).Send(w)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 

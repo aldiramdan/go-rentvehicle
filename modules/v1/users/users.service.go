@@ -25,7 +25,7 @@ func (s *user_srvc) GetAllUsers() *libs.Response {
 	result, err := s.repo.GetAllUsers()
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -40,7 +40,7 @@ func (s *user_srvc) GetPageUsers(page, perpage int) *libs.Response {
 	result, err := s.repo.GetPageUsers(perpage, offset)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -67,22 +67,22 @@ func (s *user_srvc) GetUserById(id string) *libs.Response {
 func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 
 	if userExsist := s.repo.UserExsist(data.Username); userExsist {
-		return libs.GetResponse("username is already registered", 400, true)
+		return libs.GetResponse("username is already registered", 401, true)
 	}
 
 	if emailExsist := s.repo.EmailExsist(data.Email); emailExsist {
-		return libs.GetResponse("email is already registered", 400, true)
+		return libs.GetResponse("email is already registered", 401, true)
 	}
 
 	hashPassword, err := libs.HashPassword(data.Password)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 	data.Password = hashPassword
 
 	tokenVeify, err := libs.CodeCrypt(32)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	data.TokenVerify = tokenVeify
@@ -95,12 +95,12 @@ func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 
 	err = libs.SendMail(data, &emailData)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	dataUser, err := s.repo.AddUser(data)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	result, _ := s.repo.GetUserById(dataUser.UserID)
@@ -125,7 +125,7 @@ func (s *user_srvc) UpdateUser(data *models.User, id string) *libs.Response {
 	if data.Password != "" {
 		hashPassword, err := libs.HashPassword(data.Password)
 		if err != nil {
-			return libs.GetResponse(err.Error(), 400, true)
+			return libs.GetResponse(err.Error(), 500, true)
 		}
 		data.Password = hashPassword
 	}
@@ -137,7 +137,7 @@ func (s *user_srvc) UpdateUser(data *models.User, id string) *libs.Response {
 	dataUser, err := s.repo.UpdateUser(data, id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	result, _ := s.repo.GetUserById(dataUser.UserID)
@@ -166,7 +166,7 @@ func (s *user_srvc) DeleteUser(id string) *libs.Response {
 	_, err = s.repo.DeleteUser(id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	response := map[string]string{"message": "User deleted successfully"}

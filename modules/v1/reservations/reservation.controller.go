@@ -132,7 +132,7 @@ func (c *reservation_ctrl) UpdateReservation(w http.ResponseWriter, r *http.Requ
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		libs.GetResponse(err.Error(), 500, true).Send(w)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 

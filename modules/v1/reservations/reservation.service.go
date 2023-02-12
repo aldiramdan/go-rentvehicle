@@ -38,7 +38,7 @@ func (s *reservation_srvc) GetPageReservations(page, perpage int) *libs.Response
 	result, err := s.repo.GetPageReservations(perpage, offset)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -83,7 +83,7 @@ func (s *reservation_srvc) AddReservation(data *models.Reservation) *libs.Respon
 
 	paymentCode, err := libs.CodeCrypt(6)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	if data.PaymentMethod == "Cash" {
@@ -117,7 +117,7 @@ func (s *reservation_srvc) UpdateReservation(data *models.Reservation, paymentCo
 	}
 
 	if datas.PaymentStatus == "Paid" {
-		return libs.GetResponse("Payment successfully", 400, true)
+		return libs.GetResponse("payment successfully", 401, true)
 	} else {
 		data.PaymentStatus = "Paid"
 		data.IsBooked = true

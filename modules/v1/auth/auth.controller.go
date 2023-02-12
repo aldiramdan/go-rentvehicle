@@ -26,7 +26,7 @@ func (c *auth_ctrl) Login(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		libs.GetResponse(err.Error(), 401, true)
+		libs.GetResponse(err.Error(), 400, true)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (c *auth_ctrl) ResendEmail(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		libs.GetResponse(err.Error(), 401, true)
+		libs.GetResponse(err.Error(), 400, true)
 		return
 	}
 

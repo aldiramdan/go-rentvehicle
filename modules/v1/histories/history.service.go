@@ -98,13 +98,13 @@ func (s *history_service) UpdateHistory(data *models.History, id string) *libs.R
 	}
 
 	if datas.Reservation.PaymentStatus == "Pending" {
-		return libs.GetResponse("You need to pay", 400, true)
+		return libs.GetResponse("you need to pay", 401, true)
 	}
 
 	result, err := s.repo.UpdateHistory(data, id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -127,7 +127,7 @@ func (s *history_service) DeleteHistory(id string) *libs.Response {
 	_, err = s.repo.DeleteHistory(id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	response := map[string]string{"message": "History deleted successfully"}

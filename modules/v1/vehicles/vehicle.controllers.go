@@ -142,7 +142,7 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		_ = os.Remove(imageName)
-		libs.GetResponse(err.Error(), 500, true).Send(w)
+		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
 

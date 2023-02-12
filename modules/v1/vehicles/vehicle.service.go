@@ -38,7 +38,7 @@ func (s *vehicle_service) GetPageVehicles(page, perpage int) *libs.Response {
 	result, err := s.repo.GetPageVehicles(perpage, offset)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -116,7 +116,7 @@ func (s *vehicle_service) UpdateVehicle(data *models.Vehicle, id string) *libs.R
 	result, err := s.repo.UpdateVehicle(data, id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(result, 200, false)
@@ -142,7 +142,7 @@ func (s *vehicle_service) DeleteVehicle(id string) *libs.Response {
 	_, err = s.repo.DeleteVehicle(id)
 
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	response := map[string]string{"message": "Vehicle deleted successfully"}

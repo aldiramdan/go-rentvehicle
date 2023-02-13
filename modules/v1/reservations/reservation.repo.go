@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/aldiramdan/go-backend/databases/orm/models"
-	"github.com/aldiramdan/go-backend/libs"
 	"gorm.io/gorm"
 )
 
@@ -36,6 +35,31 @@ func (r *reservation_repo) GetAllReservations() (*models.Reservations, error) {
 	}
 
 	if len(data) == 0 {
+		return nil, errors.New("data reservation is empty")
+	}
+
+	return &data, nil
+
+}
+
+func (r *reservation_repo) GetReservationUser(user_id string) (*models.Reservation, error) {
+
+	var data models.Reservation
+
+	if err := r.db.
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id, email, name, phone, created_at, updated_at")
+		}).
+		Preload("Vehicle", func(db *gorm.DB) *gorm.DB {
+			return db.Select("vehicle_id, name, location, price, category_id, rating, created_at, updated_at")
+		}).
+		Preload("Vehicle.Category").
+		Where("user_id = ? AND payment_status = ?", user_id, "Pending").
+		Find(&data).Error; err != nil {
+		return nil, err
+	}
+
+	if data.PaymentStatus == "" || data.UserID == "" {
 		return nil, errors.New("data reservation is empty")
 	}
 
@@ -209,20 +233,12 @@ func (r *reservation_repo) AfterCreate(data *models.Reservation) error {
 			return errors.New("failed update data vehicle")
 		}
 
-		newRating := libs.CalculateNewRating(dataVehicle.TotalRent, dataVehicle.Rating, data.Rating)
-
-		if err := r.db.
-			Model(&dataVehicle).
-			Where("vehicle_id = ?", data.VehicleID).
-			Updates(map[string]interface{}{"rating": newRating}).Error; err != nil {
-			return errors.New("failed update data vehicle")
-		}
 	}
 
 	if err := r.db.
 		Model(&dataVehicle).
 		Where("vehicle_id = ?", data.VehicleID).
-		Updates(map[string]interface{}{"total_rent": dataVehicle.TotalRent + 1}).Error; err != nil {
+		Update("total_rent", dataVehicle.TotalRent+1).Error; err != nil {
 		return errors.New("failed update data vehicle")
 	}
 
@@ -306,7 +322,7 @@ func (r *reservation_repo) AfterUpdate(data *models.Reservation, paymentCode str
 		if err := r.db.
 			Model(&dataVehicle).
 			Where("vehicle_id = ?", data.VehicleID).
-			Updates(map[string]interface{}{"status": "unavailable"}).Error; err != nil {
+			Update("status", "unavailable").Error; err != nil {
 			return errors.New("failed update data vehicle")
 		}
 	}
@@ -315,15 +331,6 @@ func (r *reservation_repo) AfterUpdate(data *models.Reservation, paymentCode str
 		Model(&dataVehicle).
 		Where("vehicle_id = ?", data.VehicleID).
 		Update("stock", dataVehicle.Stock-data.Quantity).Error; err != nil {
-		return errors.New("failed update data vehicle")
-	}
-
-	newRating := libs.CalculateNewRating(dataVehicle.TotalRent, dataVehicle.Rating, data.Rating)
-
-	if err := r.db.
-		Model(&dataVehicle).
-		Where("vehicle_id = ?", data.VehicleID).
-		Updates(map[string]interface{}{"rating": newRating}).Error; err != nil {
 		return errors.New("failed update data vehicle")
 	}
 

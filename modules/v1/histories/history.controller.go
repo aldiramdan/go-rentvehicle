@@ -148,6 +148,37 @@ func (c *history_ctrl) UpdateHistory(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (c *history_ctrl) UpdateHistoryRating(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	id, ok := vars["id"]
+
+	if !ok {
+		libs.GetResponse("ID is required", 400, true).Send(w)
+		return
+	}
+
+	var data *models.History
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(data)
+
+	if err != nil {
+		libs.GetResponse(err.Error(), 400, true).Send(w)
+		return
+	}
+
+	c.srvc.UpdateHistoryRating(data, id).Send(w)
+
+}
+
 func (c *history_ctrl) DeleteHistory(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

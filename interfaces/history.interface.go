@@ -12,6 +12,7 @@ type HistoryRepo interface {
 	SearchHistory(user_id string, query string) (*models.Histories, error)
 	AddHistory(data *models.History) (*models.History, error)
 	UpdateHistory(data *models.History, id string) (*models.History, error)
+	UpdateHistoryRating(data *models.History, id string) (*models.History, error)
 	DeleteHistory(id string) (*models.History, error)
 }
 
@@ -22,5 +23,6 @@ type HistorySrvc interface {
 	SearchHistory(user_id string, query string) *libs.Response
 	AddHistory(data *models.History) *libs.Response
 	UpdateHistory(data *models.History, id string) *libs.Response
+	UpdateHistoryRating(data *models.History, id string) *libs.Response
 	DeleteHistory(id string) *libs.Response
 }

@@ -42,7 +42,7 @@ func (s *auth_srvc) Login(data *models.User) *libs.Response {
 
 	token, err := jwt.Create()
 	if err != nil {
-		return libs.GetResponse(err.Error(), 401, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	return libs.GetResponse(token_response{Token: token}, 200, false)
@@ -52,7 +52,7 @@ func (s *auth_srvc) Login(data *models.User) *libs.Response {
 func (s *auth_srvc) VerifyEmail(token string) *libs.Response {
 
 	if tokenExsist := s.repo.TokenExsist(token); !tokenExsist {
-		return libs.GetResponse("failed to verify email", 400, true)
+		return libs.GetResponse("failed to verify email", 401, true)
 	}
 
 	user, err := s.repo.GetByToken(token)
@@ -84,7 +84,7 @@ func (s *auth_srvc) VerifyEmail(token string) *libs.Response {
 func (s *auth_srvc) ResendEmail(data *models.User) *libs.Response {
 
 	if emailExsist := s.repo.EmailExsist(data.Email); !emailExsist {
-		return libs.GetResponse("email is not registered", 400, true)
+		return libs.GetResponse("email is not registered", 401, true)
 	}
 
 	user, err := s.repo.GetByEmail(data.Email)
@@ -95,7 +95,7 @@ func (s *auth_srvc) ResendEmail(data *models.User) *libs.Response {
 
 	tokenVeify, err := libs.CodeCrypt(32)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	data.TokenVerify = tokenVeify
@@ -108,12 +108,12 @@ func (s *auth_srvc) ResendEmail(data *models.User) *libs.Response {
 
 	err = libs.SendMail(data, &emailData)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	err = s.repo.UpdateToken(user.UserID, tokenVeify)
 	if err != nil {
-		return libs.GetResponse(err.Error(), 400, true)
+		return libs.GetResponse(err.Error(), 500, true)
 	}
 
 	response := map[string]string{"message": "successfully resend email "}

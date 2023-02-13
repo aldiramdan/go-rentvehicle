@@ -20,6 +20,7 @@ func RouteHistory(rt *mux.Router, db *gorm.DB) {
 	route.HandleFunc("/search/", middlewares.Handle(ctrl.SearchHistory, middlewares.AuthMidle("user", "admin"))).Methods("GET")
 	route.HandleFunc("/", middlewares.Handle(ctrl.AddHistory, middlewares.AuthMidle("admin"))).Methods("POST")
 	route.HandleFunc("/{id}", middlewares.Handle(ctrl.UpdateHistory, middlewares.AuthMidle("admin"))).Methods("PUT")
+	route.HandleFunc("/rating/{id}", middlewares.Handle(ctrl.UpdateHistoryRating, middlewares.AuthMidle("user"))).Methods("PUT")
 	route.HandleFunc("/{id}", middlewares.Handle(ctrl.DeleteHistory, middlewares.AuthMidle("admin"))).Methods("DElETE")
 
 }

@@ -7,6 +7,7 @@ type History struct {
 	ReservationID string      `gorm:"foreignKey:ReservationID; references:ReservationID" json:"reservation_id" valid:"uuidv4"`
 	Reservation   Reservation `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"reservation_data" valid:"-"`
 	ReturnStatus  string      `json:"return_status" gorm:"default: Not been returned" valid:"type(string)"`
+	Rating        float64     `json:"rating" valid:"type(float64),range(1|5)"`
 	CreatedAt     time.Time   `json:"created_at" valid:"-"`
 	UpdatedAt     time.Time   `json:"updated_at" valid:"-"`
 }

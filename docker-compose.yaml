@@ -22,7 +22,6 @@ services:
     container_name: pg_container
     environment:
       - POSTGRES_DB=${DB_NAME}
-      - DATABASE_HOST=${PG_HOST}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
     ports:

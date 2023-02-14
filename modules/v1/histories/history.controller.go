@@ -34,14 +34,27 @@ func (c *history_ctrl) GetPageHistories(w http.ResponseWriter, r *http.Request) 
 
 	user_id := r.Context().Value("user")
 
-	varsPage := r.URL.Query().Get("page")
-	varsPerPage := r.URL.Query().Get("perpage")
+	varsPage := r.URL.Query()
+
+	qPage, ok := varsPage["page"]
+	if !ok {
+		libs.GetResponse("page is required", 400, true).Send(w)
+		return
+	}
+
+	varsPerPage := r.URL.Query()
+
+	qPerpage, ok := varsPerPage["perpage"]
+	if !ok {
+		libs.GetResponse("perpage is required", 400, true).Send(w)
+		return
+	}
 
 	var page, perpage int
 	var err error
 
-	if varsPage != "" {
-		page, err = strconv.Atoi(varsPage)
+	if qPage[0] != "" {
+		page, err = strconv.Atoi(qPage[0])
 		if err != nil {
 			libs.GetResponse(err.Error(), 400, true).Send(w)
 			return
@@ -50,8 +63,8 @@ func (c *history_ctrl) GetPageHistories(w http.ResponseWriter, r *http.Request) 
 		page = 1
 	}
 
-	if varsPerPage != "" {
-		perpage, err = strconv.Atoi(varsPerPage)
+	if qPerpage[0] != "" {
+		perpage, err = strconv.Atoi(qPerpage[0])
 		if err != nil {
 			libs.GetResponse(err.Error(), 400, true).Send(w)
 			return

@@ -16,9 +16,9 @@ type UserRepo interface {
 	UpdateUser(data *models.User, id string) (*models.User, error)
 	DeleteUser(id string) (*models.User, error)
 	UpdateToken(id, token string) error
-	UserExsist(username string) bool
-	EmailExsist(email string) bool
-	TokenExsist(token string) bool
+	UserExists(username string) bool
+	EmailExists(email string) bool
+	TokenExists(token string) bool
 }
 
 type UserSrvc interface {

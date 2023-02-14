@@ -66,11 +66,11 @@ func (s *user_srvc) GetUserById(id string) *libs.Response {
 
 func (s *user_srvc) AddUser(data *models.User) *libs.Response {
 
-	if userExsist := s.repo.UserExsist(data.Username); userExsist {
+	if userExists := s.repo.UserExists(data.Username); userExists {
 		return libs.GetResponse("username is already registered", 401, true)
 	}
 
-	if emailExsist := s.repo.EmailExsist(data.Email); emailExsist {
+	if emailExists := s.repo.EmailExists(data.Email); emailExists {
 		return libs.GetResponse("email is already registered", 401, true)
 	}
 

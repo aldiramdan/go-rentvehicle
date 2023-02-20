@@ -162,7 +162,7 @@ func (r *user_repo) UpdateToken(id, token string) error {
 
 }
 
-func (r *user_repo) UserExsist(username string) bool {
+func (r *user_repo) UserExists(username string) bool {
 
 	var data models.User
 
@@ -173,7 +173,7 @@ func (r *user_repo) UserExsist(username string) bool {
 
 }
 
-func (r *user_repo) EmailExsist(email string) bool {
+func (r *user_repo) EmailExists(email string) bool {
 
 	var data models.User
 
@@ -184,7 +184,7 @@ func (r *user_repo) EmailExsist(email string) bool {
 
 }
 
-func (r *user_repo) TokenExsist(token string) bool {
+func (r *user_repo) TokenExists(token string) bool {
 
 	var data models.User
 

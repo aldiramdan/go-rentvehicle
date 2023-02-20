@@ -51,7 +51,7 @@ func (s *auth_srvc) Login(data *models.User) *libs.Response {
 
 func (s *auth_srvc) VerifyEmail(token string) *libs.Response {
 
-	if tokenExsist := s.repo.TokenExsist(token); !tokenExsist {
+	if tokenExists := s.repo.TokenExists(token); !tokenExists {
 		return libs.GetResponse("failed to verify email", 401, true)
 	}
 
@@ -83,7 +83,7 @@ func (s *auth_srvc) VerifyEmail(token string) *libs.Response {
 
 func (s *auth_srvc) ResendEmail(data *models.User) *libs.Response {
 
-	if emailExsist := s.repo.EmailExsist(data.Email); !emailExsist {
+	if emailExists := s.repo.EmailExists(data.Email); !emailExists {
 		return libs.GetResponse("email is not registered", 401, true)
 	}
 

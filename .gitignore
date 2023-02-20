@@ -48,7 +48,6 @@ go.work
 .ionide
 
 # Local App
-public/*
 databases/pg_data
 
 # End of https://www.toptal.com/developers/gitignore/api/go,dotenv,visualstudiocode

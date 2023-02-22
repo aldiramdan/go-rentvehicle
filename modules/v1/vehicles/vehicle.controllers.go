@@ -127,6 +127,9 @@ func (c *vehicle_ctrl) AddVehicle(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
+		if data.Picture != "public/default_image.jpg" {
+			_ = os.Remove(data.Picture)
+		}
 		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}
@@ -162,6 +165,9 @@ func (c *vehicle_ctrl) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(data)
 
 	if err != nil {
+		if imageName != "public/default_image.jpg" {
+			_ = os.Remove(imageName)
+		}
 		libs.GetResponse(err.Error(), 400, true).Send(w)
 		return
 	}

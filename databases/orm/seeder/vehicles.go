@@ -12,7 +12,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "8700e8d6-d113-4655-9e7e-e2741a0345d1",
 		Picture:     "public/van.png",
-		Rating:      0,
+		Rating:      4.5,
 		TotalRent:   0,
 	},
 	{
@@ -24,7 +24,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "8700e8d6-d113-4655-9e7e-e2741a0345d1",
 		Picture:     "public/lamoborghini.png",
-		Rating:      0,
+		Rating:      5,
 		TotalRent:   0,
 	},
 	{
@@ -36,7 +36,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "8700e8d6-d113-4655-9e7e-e2741a0345d1",
 		Picture:     "public/jeep.png",
-		Rating:      0,
+		Rating:      4.7,
 		TotalRent:   0,
 	},
 	{
@@ -48,7 +48,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "8700e8d6-d113-4655-9e7e-e2741a0345d1",
 		Picture:     "public/whitejeep.png",
-		Rating:      0,
+		Rating:      4.8,
 		TotalRent:   0,
 	},
 	{
@@ -60,7 +60,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "7c2c2d26-f935-4f60-92b1-12aaad3a52d3",
 		Picture:     "public/vespa.png",
-		Rating:      0,
+		Rating:      4.6,
 		TotalRent:   0,
 	},
 	{
@@ -72,7 +72,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "7c2c2d26-f935-4f60-92b1-12aaad3a52d3",
 		Picture:     "public/hondaklx.png",
-		Rating:      0,
+		Rating:      4.5,
 		TotalRent:   0,
 	},
 	{
@@ -84,7 +84,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "7c2c2d26-f935-4f60-92b1-12aaad3a52d3",
 		Picture:     "public/honda.png",
-		Rating:      0,
+		Rating:      4.7,
 		TotalRent:   0,
 	},
 	{
@@ -96,7 +96,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "7c2c2d26-f935-4f60-92b1-12aaad3a52d3",
 		Picture:     "public/maticbike.png",
-		Rating:      0,
+		Rating:      4.9,
 		TotalRent:   0,
 	},
 	{
@@ -108,7 +108,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "cd205e8a-6e8c-4d01-91e2-95d5c3a66fef",
 		Picture:     "public/fixie.png",
-		Rating:      0,
+		Rating:      4.3,
 		TotalRent:   0,
 	},
 	{
@@ -120,7 +120,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "cd205e8a-6e8c-4d01-91e2-95d5c3a66fef",
 		Picture:     "public/sportbike.png",
-		Rating:      0,
+		Rating:      4.3,
 		TotalRent:   0,
 	},
 	{
@@ -132,7 +132,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "cd205e8a-6e8c-4d01-91e2-95d5c3a66fef",
 		Picture:     "public/onthel.png",
-		Rating:      0,
+		Rating:      4.3,
 		TotalRent:   0,
 	},
 	{
@@ -144,7 +144,7 @@ var VehicleSeed = models.Vehicles{
 		Stock:       10,
 		CategoryID:  "cd205e8a-6e8c-4d01-91e2-95d5c3a66fef",
 		Picture:     "public/fixiegray.png",
-		Rating:      0,
+		Rating:      4.3,
 		TotalRent:   0,
 	},
 }
